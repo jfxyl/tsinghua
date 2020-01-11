@@ -5,15 +5,18 @@ const crypto = require('crypto');
 const storage = require('electron-localstorage');
 let mainWindow = BrowserWindow.fromId(1)
 
-ipcMain.on('download-main-video', function(event, url) {
-    event.video_type = 'aaaaa'
-    console.log(event)
-    mainWindow.webContents.downloadURL(url)
-});
-ipcMain.on('download-douyin-video', function(event, url) {
+// ipcMain.on('download-local-video', function(event, url) {
+//     mainWindow.webContents.downloadURL(url)
+// });
+// ipcMain.on('download-douyin-video', function(event, url) {
+//     mainWindow.webContents.downloadURL(url)
+// });
+
+ipcMain.on('download', function(event, url) {
     mainWindow.webContents.downloadURL(url)
 });
 
+console.log(mainWindow)
 mainWindow.webContents.session.on('will-download', (event, item, webContents) => {
     console.log(event)
     console.log(item)

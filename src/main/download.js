@@ -13,19 +13,16 @@ let mainWindow = BrowserWindow.fromId(1)
 // });
 
 ipcMain.on('download', function(event, url) {
+    console.log(url)
     mainWindow.webContents.downloadURL(url)
 });
 
-console.log(mainWindow)
 mainWindow.webContents.session.on('will-download', (event, item, webContents) => {
-    console.log(event)
-    console.log(item)
-    console.log(webContents)
     //设置文件存放位置
     var fileId = crypto.createHash('md5').update(item.getURL()).digest("hex");
     var filename = fileId+'_'+item.getFilename();
     var filepath = path.resolve('./download/'+filename)
-    console.log(filepath)
+
     try{
         fs.accessSync(filepath,fs.constants.F_OK)
         item.cancel()
@@ -44,9 +41,10 @@ mainWindow.webContents.session.on('will-download', (event, item, webContents) =>
         })
         item.once('done', (event, state) => {
             if (state === 'completed') {
+                console.log(fileId+'------'+filepath)
                 console.log('Download successfully')
-                storage.setItem(fileId,filepath);
-                console.log(storage.getStoragePath())
+                storage.setItem(fileId,filepath)
+                console.log(storage.getItem(fileId))
             } else {
                 console.log(`Download failed: ${state}`)
             }

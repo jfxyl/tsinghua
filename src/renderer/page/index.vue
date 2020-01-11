@@ -494,7 +494,7 @@ export default {
             setInterval(() => {
                 that.$refs.cloudChart.init();
             }, 10000);
-            setInterval(that.haveChange,2000)
+            setInterval(that.haveChange,60000)
 
             var myVideo=document.getElementById("video_id");
             myVideo.addEventListener('error',function(){
@@ -514,6 +514,7 @@ export default {
                 if(that.dyVideoSrc){
                     var fileId = crypto.createHash('md5').update(that.dyVideoSrc).digest("hex");
                     var filepath = storage.getItem(fileId);
+                    console.log('dyVideoSrc:'+filepath)
                     try{
                         fs.accessSync(filepath,fs.constants.F_OK)
                         that.dyVideoSrc = 'file://' + filepath
@@ -628,19 +629,19 @@ export default {
                      })
                      that.hotList = data.hot_data;
 
-                     storage.setItem('wxList',that.wxList)
-                     storage.setItem('wbAcount',that.wbAcount)
-                     storage.setItem('wbList',that.wbList)
-                     storage.setItem('newsList',that.newsList)
-                     storage.setItem('hotList',that.hotList)
+                     localStorage.setItem('wxList',JSON.stringify(that.wxList))
+                     localStorage.setItem('wbAcount',JSON.stringify(that.wbAcount))
+                     localStorage.setItem('wbList',JSON.stringify(that.wbList))
+                     localStorage.setItem('newsList',JSON.stringify(that.newsList))
+                     localStorage.setItem('hotList',JSON.stringify(that.hotList))
                 })
             },null,e => {
                 let that = this;
-                let wxList = storage.getItem('wxList')
-                let wbAcount = storage.getItem('wbAcount')
-                let wbList = storage.getItem('wbList')
-                let newsList = storage.getItem('newsList')
-                let hotList = storage.getItem('hotList')
+                let wxList = JSON.parse(localStorage.getItem('wxList'))
+                let wbAcount = JSON.parse(localStorage.getItem('wbAcount'))
+                let wbList = JSON.parse(localStorage.getItem('wbList'))
+                let newsList = JSON.parse(localStorage.getItem('newsList'))
+                let hotList = JSON.parse(localStorage.getItem('hotList'))
 
                 if(wxList) that.wxList = wxList
                 if(wbAcount) that.wbAcount = wbAcount
@@ -663,13 +664,13 @@ export default {
                         ipcRenderer.send('download', element.img_url)
                     });
 
-                    storage.setItem('reportList',that.reportList)
-                    storage.setItem('buildList',that.buildList)
+                    localStorage.setItem('reportList',JSON.stringify(that.reportList))
+                    localStorage.setItem('buildList',JSON.stringify(that.buildList))
                 })
             },null,e => {
                 let that = this;
-                let reportList = storage.getItem('reportList')
-                let buildList = storage.getItem('buildList')
+                let reportList = JSON.parse(localStorage.getItem('reportList'))
+                let buildList = JSON.parse(localStorage.getItem('buildList'))
 
                 if(reportList) that.reportList = reportList
                 if(buildList) that.buildList = buildList
@@ -686,13 +687,13 @@ export default {
                     that.mediaList = data.media;
                     that.yqTimer = setTimeout(that.yqScroll,36000,1)
 
-                    storage.setItem('communiList',that.communiList)
-                    storage.setItem('mediaList',that.mediaList)
+                    localStorage.setItem('communiList',JSON.stringify(that.communiList))
+                    localStorage.setItem('mediaList',JSON.stringify(that.mediaList))
                 })
             },null,e => {
                 let that = this;
-                let communiList = storage.getItem('communiList')
-                let mediaList = storage.getItem('mediaList')
+                let communiList = JSON.parse(localStorage.getItem('communiList'))
+                let mediaList = JSON.parse(localStorage.getItem('mediaList'))
 
                 if(communiList) that.communiList = communiList
                 if(mediaList) that.mediaList = mediaList
@@ -711,12 +712,12 @@ export default {
                         that.timer = setTimeout(that.scroll,20000,1)
 
                         console.log(that.rankList)
-                        storage.setItem('rankList',that.rankList)
+                        localStorage.setItem('rankList',JSON.stringify(that.rankList))
                     }
                 })
             },null,e => {
                 let that = this;
-                let rankList = storage.getItem('rankList')
+                let rankList = JSON.parse(localStorage.getItem('rankList'))
                 if(rankList) that.rankList = rankList
             })
         },
@@ -731,11 +732,11 @@ export default {
                             that.defaultWords = r.data
                         }
                     }
-                    storage.setItem('defaultWords',that.defaultWords)
+                    localStorage.setItem('defaultWords',JSON.stringify(that.defaultWords))
                 })
             },null,e => {
                 let that = this;
-                let defaultWords = storage.getItem('defaultWords')
+                let defaultWords = JSON.parse(localStorage.getItem('defaultWords'))
                 if(defaultWords) that.defaultWords = defaultWords
             })
         },
@@ -768,7 +769,7 @@ export default {
                             return
                         }
                     }
-                    storage.setItem('videoList',that.videoList)
+                    localStorage.setItem('videoList',JSON.stringify(that.videoList))
                     that.videoList.forEach(element => {
                         console.log(element)
                         ipcRenderer.send('download', element.video_url)
@@ -781,7 +782,7 @@ export default {
                         console.log(element)
                         ipcRenderer.send('download', element.local_url)
                     });
-                    storage.setItem('dyVideoList',that.dyVideoList)
+                    localStorage.setItem('dyVideoList',JSON.stringify(that.dyVideoList))
                     
                     that.vLen = that.videoList.length;//播放列表的长度
                     let video = document.getElementById("video_id");
@@ -796,8 +797,8 @@ export default {
                 })
              },null,e => {
                 let that = this
-                let videoList = storage.getItem('videoList')
-                let dyVideoList = storage.getItem('dyVideoList')
+                let videoList = JSON.parse(localStorage.getItem('videoList'))
+                let dyVideoList = JSON.parse(localStorage.getItem('dyVideoList'))
 
                 if(videoList) that.videoList = videoList
                 if(dyVideoList) that.dyVideoList = dyVideoList

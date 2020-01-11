@@ -5,7 +5,7 @@ import router from './router'
 
 
 import api from './api/index.js'
-import $ from 'jquery'
+import jquery from 'jquery'
 import utils from './utils/index.js'
 import echarts from 'echarts'
 import echartswordcloud from 'echarts-wordcloud';

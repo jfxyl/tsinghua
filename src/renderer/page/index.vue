@@ -15,6 +15,7 @@
                 <p class="spot spr4"><img src="static/images/spot.png"></p>
             </div>
         </div>
+        <img src="http://www.baidu.com"  alt="">
         <div class="continer">
             <div class="clearfix">
                 <!-- 左边 -->
@@ -343,7 +344,6 @@
                         </div>
                     </div>
                 </div>
-
             </div>
            
         </div>
@@ -523,7 +523,7 @@ export default {
                     }
                 }
             });
-        }) 
+        })
     },
     computed: {
         optionSetting () {
@@ -630,10 +630,14 @@ export default {
                      that.hotList = data.hot_data;
 
                      localStorage.setItem('wxList',JSON.stringify(that.wxList))
+                     that.handleData(that.wxList,'news_content')
                      localStorage.setItem('wbAcount',JSON.stringify(that.wbAcount))
                      localStorage.setItem('wbList',JSON.stringify(that.wbList))
+                     that.handleData(that.wbList,'news_content')
                      localStorage.setItem('newsList',JSON.stringify(that.newsList))
+                     that.handleData(that.newsList,'news_content')
                      localStorage.setItem('hotList',JSON.stringify(that.hotList))
+                     that.handleData(that.hotList,'news_content')
                 })
             },null,e => {
                 let that = this;
@@ -660,12 +664,12 @@ export default {
                     that.bkTimer = setTimeout(that.bkScroll,38000,1)
 
                     that.reportList.forEach(element => {
-                        console.log(element)
                         ipcRenderer.send('download', element.img_url)
                     });
 
                     localStorage.setItem('reportList',JSON.stringify(that.reportList))
                     localStorage.setItem('buildList',JSON.stringify(that.buildList))
+                    that.handleData(that.buildList,'news_content')
                 })
             },null,e => {
                 let that = this;
@@ -711,7 +715,6 @@ export default {
                         that.rankList.news = r.data.news.slice(0,5);
                         that.timer = setTimeout(that.scroll,20000,1)
 
-                        console.log(that.rankList)
                         localStorage.setItem('rankList',JSON.stringify(that.rankList))
                     }
                 })
@@ -771,15 +774,12 @@ export default {
                     }
                     localStorage.setItem('videoList',JSON.stringify(that.videoList))
                     that.videoList.forEach(element => {
-                        console.log(element)
                         ipcRenderer.send('download', element.video_url)
                     });
-
 
                     that.dyVideoList = r.data.douyin;
                     // that.dyVideoList.shift()
                     that.dyVideoList.forEach(element => {
-                        console.log(element)
                         ipcRenderer.send('download', element.local_url)
                     });
                     localStorage.setItem('dyVideoList',JSON.stringify(that.dyVideoList))
@@ -1020,6 +1020,10 @@ export default {
         showDetail(title,content,time,auth){
             let that = this;
             that.artTitle = title;
+            if(!navigator.onLine){
+                content = that.remote2local(content)
+                console.log(content)
+            }
             that.artContent = content;
             that.artAuth= auth;
             that.artTime = time;
@@ -1034,13 +1038,38 @@ export default {
         findLocalImg(src){
             var fileId = crypto.createHash('md5').update(src).digest("hex");
             var filepath = storage.getItem(fileId);
-            console.log(filepath)
             try{
                 fs.accessSync(filepath,fs.constants.F_OK)
                 event.target.src =  'file://'+filepath
             }catch(err){
 
             }
+        },
+        handleData(data,type){
+            let reg = /<img.*?src=["|'](.*?)["|'].*?\/?>/mg
+            data.forEach(element => {
+                let imgs = element[type].match(reg)
+                for(var i in imgs){
+                    let info = reg.exec(imgs[i])
+                    if(info){
+                        ipcRenderer.send('download', info[1])
+                    }
+                }
+            });
+        },
+        remote2local(content){
+            let reg = /(<img.*?src=["|'])(.*?)(["|'].*?\/?>)/mg
+            content = content.replace(reg,function(match,$1,$2,$3){
+                var fileId = crypto.createHash('md5').update($2).digest("hex");
+                var filepath = storage.getItem(fileId);
+                try{
+                    fs.accessSync(filepath,fs.constants.F_OK)
+                    return $1 + 'file://'+filepath + $3
+                }catch(err){
+
+                }
+            })
+            return content
         }
 	}
 }

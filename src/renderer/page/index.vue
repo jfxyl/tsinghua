@@ -23,13 +23,13 @@
                     <div class="plane plane-green">
                         <div class="plane-title fs18 cr0f">清华大学微信公众号<i class="icons icon-arrow1 fr"></i></div>
                         <div class="plane-body">
-                            <div class="echart-warp clearfix news-gre">
+                            <div class="echart-warp clearfix news-gre" @click="handleClick($event,2)">
                                 <vue-seamless-scroll :data="wxList" :class-option="optionSetting" class="news-warp h148 ">
                                     <ul class="news">
                                         <li class="news-li" v-for="(item,index) in wxList" :key="index" >
-                                            <div class="in clearfix" @click="showDetail(item.news_title,item.news_content,item.news_posttime,item.news_author)">
-                                                <p class="title fs16 crff ovhidden" v-if="parseInt(item.read_num)<100000">{{item.news_title}}</p>
-                                                <p class="title fs16 crff ovhidden" v-if="parseInt(item.read_num)>=100000"><i class="icons icon-hot"></i><strong>{{item.news_title}}</strong></p>
+                                            <div class="in clearfix">
+                                                <p class="title fs16 crff ovhidden" v-if="parseInt(item.read_num)<100000" :data-title="item.news_title" :data-cont="item.news_content" :data-time="item.news_posttime" :data-auth="item.news_author" @click="showDetail(item.news_title,item.news_content,item.news_posttime,item.news_author)">{{item.news_title}}</p>
+                                                <p class="title fs16 crff ovhidden" v-if="parseInt(item.read_num)>=100000" :data-title="item.news_title" :data-cont="item.news_content" :data-time="item.news_posttime" :data-auth="item.news_author" @click="showDetail(item.news_title,item.news_content,item.news_posttime,item.news_author)"><i class="icons icon-hot"></i><strong>{{item.news_title}}</strong></p>
                                                 <p class="crb8">
                                                     <span>{{item.news_posttime}}</span>
                                                     <span class="ml20">阅读数：{{item.read_num}}</span>
@@ -47,7 +47,7 @@
                         <div class="plane-body">
                             <div class="title1 clearfix">
                                 <div class="fensi ovhidden">
-                                    <div class="img fl"><img :src="wbAcount.logo" /></div>
+                                    <div class="img fl"><img src="static/images/t-ico.png" /></div>
                                     {{wbAcount.name}}
                                 </div>
                                 <div class="fensi ar">
@@ -57,13 +57,13 @@
                                     <i class="icons icon-wb"></i>发文：{{wbAcount.publish_count}}
                                 </div>
                             </div>
-                            <div class="echart-warp clearfix news-yel">
+                            <div class="echart-warp clearfix news-yel" @click="handleClick($event,2)">
                                 <vue-seamless-scroll :data="wbList" :class-option="optionSetting1" class="news-warp h148 ">
                                     <ul class="news newscro1">
                                         <li class="news-li" v-for="(item,index) in wbList" :key="index" ref="rollul" :class="{anim:animate.anim1==true}">
-                                            <div class="in" @click="showDetail(item.news_title,item.news_content,item.news_posttime,item.news_author)">
-                                                <p class="title fs16 crff ovhidden" v-if="parseInt(item.read_num)<100000">{{item.news_title}}</p>
-                                                <p class="title fs16 crff ovhidden" v-if="parseInt(item.read_num)>=100000"><i class="icons icon-hot"></i><strong>{{item.news_title}}</strong></p>
+                                            <div class="in">
+                                                <p class="title fs16 crff ovhidden" v-if="parseInt(item.read_num)<100000" :data-title="item.news_title" :data-cont="item.news_content" :data-time="item.news_posttime" :data-auth="item.news_author" @click="showDetail(item.news_title,item.news_content,item.news_posttime,item.news_author)">{{item.news_title}}</p>
+                                                <p class="title fs16 crff ovhidden" v-if="parseInt(item.read_num)>=100000" :data-title="item.news_title" :data-cont="item.news_content" :data-time="item.news_posttime" :data-auth="item.news_author" @click="showDetail(item.news_title,item.news_content,item.news_posttime,item.news_author)"><i class="icons icon-hot"></i><strong>{{item.news_title}}</strong></p>
                                                 <p class="crb8 clearfix">
                                                     <span class="name fl">转发数：{{item.repost_num}}</span>
                                                     <span class="name ac fl">评论数：{{item.comment_num}}</span>
@@ -80,13 +80,13 @@
                     <div class="plane plane-blue mt50">
                         <div class="plane-title fs18 cr0b mb5">清华新闻网<i class="icons icon-arrow3 fr"></i></div>
                         <div class="plane-body">
-                            <div class="echart-warp newsNet clearfix">
+                            <div class="echart-warp newsNet clearfix" @click="handleClick($event,1)">
                                 <vue-seamless-scroll :data="newsList" :class-option="optionSetting5" class="news-warp h350">
                                     <ul class="news pt0">
                                         <li class="news-li" v-for="(item,index) in newsList" :key="index">
-                                            <div class="in clearfix" @click="showDetail(item.news_title,item.news_content,item.news_posttime,item.news_author)">
-                                                <p class="title fs16 crff ovhidden" v-if="parseInt(item.read_num)<100000">{{item.news_title}}</p>
-                                                <p class="title fs16 crff ovhidden" v-if="parseInt(item.read_num)>=100000"><i class="icons icon-hot"></i><strong>{{item.news_title}}</strong></p>
+                                            <div class="in clearfix">
+                                                <p class="title fs16 crff ovhidden" v-if="parseInt(item.read_num)<100000" :data-cont="item.news_content" @click="showDetail('',item.news_content,'','')">{{item.news_title}}</p>
+                                                <p class="title fs16 crff ovhidden" v-if="parseInt(item.read_num)>=100000" :data-cont="item.news_content" @click="showDetail('',item.news_content,'','')"><i class="icons icon-hot"></i><strong>{{item.news_title}}</strong></p>
                                                 <p class="crb8">
                                                     <span>{{item.news_posttime}}</span>
                                                     <span class="ml20">阅读数：{{item.read_num}}</span>
@@ -144,12 +144,12 @@
                                     </div>
                                     <div class="item slide-item2" :class="bkCarouse1">
                                         <div class="plane-body pt0">
-                                            <div class="echart-warp mt0 news-blue">
-                                                <vue-seamless-scroll :data="buildList" :class-option="optionSetting4" class="news-warp buildNews h155" v-if="buildList!=''&& bkCurNav==1">
+                                            <div class="echart-warp mt0 news-blue" @click="handleClick($event,2)">
+                                                <vue-seamless-scroll :data="buildList" :class-option="optionSetting4" class="news-warp buildNews h155" v-if="buildList!=''&& isShowReport">
                                                     <ul class="news pt0">
                                                         <li class="news-li" v-for="(item,index) in buildList" :key="index">
-                                                            <div class="in clearfix" @click="showDetail(item.news_title,item.news_content,item.news_posttime,item.news_author)">
-                                                                <p class="title fs16 crff ovhidden">{{item.news_title}}</p>
+                                                            <div class="in clearfix">
+                                                                <p class="title fs16 crff ovhidden" :data-title="item.news_title" :data-cont="item.news_content" :data-time="item.news_posttime" :data-auth="item.news_author" @click="showDetail(item.news_title,item.news_content,item.news_posttime,item.news_author)">{{item.news_title}}</p>
                                                                 <p class="crb8">
                                                                     <span>{{item.news_posttime}}</span>
                                                                 </p>
@@ -187,11 +187,11 @@
                     <div class="plane plane-green">
                         <div class="plane-title fs18 cr0f">热点新闻<i class="icons icon-arrow1 fr"></i></div>
                         <div class="plane-body">
-                            <div class="echart-warp clearfix ">
+                            <div class="echart-warp clearfix " @click="handleClick($event,2)">
                                 <vue-seamless-scroll :data="hotList" :class-option="optionSetting3" class="news-warp h206">
                                     <ul class="news">
                                         <li class="news-li hotNew clearfix" v-for="(item,index) in hotList" :key="index" >
-                                            <div class="pro fs16 ovhidden" :class="'newTit'+item.ind"  @click="showDetail(item.news_title,item.news_content,item.news_posttime,item.news_author)">
+                                            <div class="pro fs16 ovhidden" :class="'newTit'+item.ind"  :data-title="item.news_title" :data-cont="item.news_content" :data-time="item.news_posttime" :data-auth="item.news_author" @click="showDetail(item.news_title,item.news_content,item.news_posttime,item.news_author)">
                                                 <p class="fr" v-if="item.ind<=3">
                                                     <span v-for="i of (4-item.ind)" :key="i"><img class="" src="static/images/fire.png"></span>
                                                 </p>
@@ -216,12 +216,12 @@
                                 <!-- 轮播（Carousel）项目 -->
                                 <div class="carousel-inner h148">
                                     <div class="item slide-item2" :class="yqCarouse0">
-                                        <div class="echart-warp newsNet clearfix">
+                                        <div class="echart-warp newsNet clearfix" @click="handleClick($event,1)">
                                             <vue-seamless-scroll :data="communiList" :class-option="optionSetting2" class="news-warp h148">
                                                 <ul class="news pt0">
-                                                    <li class="news-li" v-for="(item,index) in communiList" :key="index" @click="showDetail(item.news_title,item.news_content,item.news_posttime,item.news_author)">
+                                                    <li class="news-li" v-for="(item,index) in communiList" :key="index">
                                                         <div class="in clearfix">
-                                                            <p class="title fs16 crff ovhidden">{{item.news_title}}</p>
+                                                            <p class="title fs16 crff ovhidden" :data-cont="item.news_content" @click="showDetail('',item.news_content,'','')">{{item.news_title}}</p>
                                                             <p class="crb8">
                                                                 <span>{{item.news_posttime}}</span>
                                                                 <span class="ml20">from:Tslnghua universlty news</span>
@@ -233,12 +233,12 @@
                                         </div>
                                     </div>
                                     <div class="item slide-item2" :class="yqCarouse1">
-                                        <div class="echart-warp newsNet clearfix">
-                                            <vue-seamless-scroll :data="mediaList" :class-option="optionSetting2" class="news-warp h148" v-if="mediaList!=''&& yqCurNav==1">
+                                        <div class="echart-warp newsNet clearfix" @click="handleClick($event,2)">
+                                            <vue-seamless-scroll :data="mediaList" :class-option="optionSetting2" class="news-warp h148" v-if="mediaList!=''&& isShowTran">
                                                 <ul class="news pt0">
                                                     <li class="news-li" v-for="(item,index) in mediaList" :key="index">
-                                                        <div class="in clearfix" @click="showDetail(item.news_title,item.news_content,item.news_posttime,item.news_author)">
-                                                            <p class="title fs16 crff ovhidden">{{item.news_title}}</p>
+                                                        <div class="in clearfix">
+                                                            <p class="title fs16 crff ovhidden" :data-title="item.news_title" :data-cont="item.news_content" :data-time="item.news_posttime" :data-auth="item.news_author" @click="showDetail(item.news_title,item.news_content,item.news_posttime,item.news_author)">{{item.news_title}}</p>
                                                             <p class="crb8">
                                                                 <span>{{item.news_posttime}}</span>
                                                                 <span class="ml20">from:{{item.news_from}}</span>
@@ -316,24 +316,13 @@
                                     </div>
                                     <div class="item slide-item1" :class="carouse2">
                                         <div class="table-warp">
-                                            <div class="rank mb5 fs16 fw7 clearfix">
-                                                <div class="fl rk1">排名</div>
-                                                <div class="fl rk2">账号</div>
-                                                <div class="fl rk3">WCI</div>
-                                            </div>
-                                            <ul class="rank bd por">
-                                                <li class="clearfix" v-for="(item,index) in rankList.news" :key="index">
-                                                    <div class="fl rk1 ac mt6">
-                                                        <i class="num" :class="'num'+(index+1)">{{index+1}}</i>
+                                            <div class="rank mb5 fs16 fw7 clearfix">近七天热文</div>
+                                            <ul class="rank bd por" @click="handleClick($event,2)">
+                                                <li class="news-li clearfix" v-for="(item,index) in rankList.news" :key="index">
+                                                   <div class="">
+                                                        <p class="ovhidden fs16" :data-title="item.news_title" :data-cont="item.news_content" :data-time="item.news_posttime" :data-auth="item.news_author" @click="showDetail(item.news_title,item.news_content,item.news_posttime,item.news_author)"><i class="num ac" :class="'num'+(index+1)">{{index+1}}</i>{{item.news_title}}</p>
+                                                        <span class="ovhidden crb8 mt6"><span>作者：{{item.news_author}}</span><span class="ml20">{{item.news_posttime}}</span></span>
                                                     </div>
-                                                    <div class="fl rk2" @click="showDetail(item.news_title,item.news_content,item.news_posttime,item.news_author)">
-                                                        <!-- <div class="img fl" v-if="item.url!=underfined"><img :src="item.url"></div> -->
-                                                        <div class="fem fl">
-                                                            <span class="ovhidden ">{{item.wx_nickname}}</span>
-                                                            <span class="ovhidden crb8">{{item.wx_name}}</span>
-                                                        </div>
-                                                    </div>
-                                                    <div class="fl rk3 mt6">{{filterNum(item.ci)}}</div>
                                                 </li>
                                             </ul>
                                         </div>
@@ -349,7 +338,7 @@
         </div>
         <Dialog ref="aticleDialog" width="1280" title="">
             <div slot="mdBox">
-                <h4 class="atiTit ac fs20 mb28">{{artTitle}}</h4>
+                <h4 class="atiTit ac fs28 mb28">{{artTitle}}</h4>
                 <p class="atiTit mt27"><span>{{artAuth}}</span><span class="ml20">{{artTime}}</span></p>
                 <vue-scroll class="mt27" :ops="ops" :style="'width:100%;height:'+opsHeight+'px'">
                     <div class="atiCont" v-html="artContent" ref="cont">{{artContent}}</div>
@@ -408,16 +397,18 @@ export default {
             carouse2:'',
             timer:null,
             timeOut:null,
-            yqCurNav:0,    //全球传播列表
+            yqCurNav:0,    //全球传播列表切换
             yqCarouse0:'active',
             yqCarouse1:'',
             yqTimer:null,
             yqTimeOut:null,
-            bkCurNav:0,    //全球传播列表
+            isShowTran:false,
+            bkCurNav:0,    //校报展示切换
             bkCarouse0:'active',
             bkCarouse1:'',
             bkTimer:null,
             bkTimeOut:null,
+            isShowReport:false,
             firstTime:true,
             firstTime2:true,
             videoList:[],//视频列表
@@ -479,8 +470,8 @@ export default {
     created() {
         let that = this;
         that.configAjax();
-        that.allAjax();
-        that.overseaAjax();
+        // that.allAjax();
+        // that.overseaAjax();
     },
     mounted() {
 		let that = this;
@@ -619,21 +610,23 @@ export default {
             let that = this;
             that.$api.get('index',null,r =>{
                 that.$parent.returnCode(r,function(){
-                    let data = r.data
-                     that.wxList = data.wx_data;
-                     that.wbAcount = data.weibo_account;
-                     that.wbList = data.weibo_data;
-                     that.newsList = data.web_data;
-                     data.hot_data.forEach((item,index)=>{
+                    let data = r.data;
+                    let wxLen = parseInt(data.wx_data.length/2)*2;
+                    that.wxList = data.wx_data.slice(0,wxLen);
+                    that.wbAcount = data.weibo_account;
+                    let wbLen = parseInt(data.weibo_data.length/2)*2;
+                    that.wbList = data.weibo_data.slice(0,wbLen);
+                    that.newsList = data.web_data;
+                    data.hot_data.forEach((item,index)=>{
                         item.ind = index+1;
-                     })
-                     that.hotList = data.hot_data;
+                    })
+                    that.hotList = data.hot_data;
 
-                     localStorage.setItem('wxList',JSON.stringify(that.wxList))
-                     localStorage.setItem('wbAcount',JSON.stringify(that.wbAcount))
-                     localStorage.setItem('wbList',JSON.stringify(that.wbList))
-                     localStorage.setItem('newsList',JSON.stringify(that.newsList))
-                     localStorage.setItem('hotList',JSON.stringify(that.hotList))
+                    localStorage.setItem('wxList',JSON.stringify(that.wxList))
+                    localStorage.setItem('wbAcount',JSON.stringify(that.wbAcount))
+                    localStorage.setItem('wbList',JSON.stringify(that.wbList))
+                    localStorage.setItem('newsList',JSON.stringify(that.newsList))
+                    localStorage.setItem('hotList',JSON.stringify(that.hotList))
                 })
             },null,e => {
                 let that = this;
@@ -841,7 +834,7 @@ export default {
             let qrcode = new QRCode('qrcode', {
                 width: 126,
                 height: 126,        // 高度
-                text: that.dyVideoList[that.dyCurr].local_url,   // 二维码内容
+                text: that.dyVideoList[that.dyCurr].short_url,   // 二维码内容
             })
         },   
         dyVideoAjax(){
@@ -863,6 +856,7 @@ export default {
         bkScroll(type){
             let that = this;
             let prevNav = that.bkCurNav;
+            that.isShowReport = true;
             that.bkCurNav = type;
             clearTimeout(that.bkTimeOut);
             that['bkCarouse'+prevNav] = 'active left';
@@ -874,6 +868,7 @@ export default {
         },
         bkNavTab(type){
             let that = this;
+            that.isShowReport = true;
             if(that.bkCurNav===type){
                 return
             }
@@ -915,6 +910,7 @@ export default {
         yqScroll(type){
             let that = this;
             let prevNav = that.yqCurNav;
+            that.isShowTran = true;
             that.yqCurNav = type;
             clearTimeout(that.yqTimeOut);
             that['yqCarouse'+prevNav] = 'active left';
@@ -926,6 +922,7 @@ export default {
         },
         yqNavTab(type){
             let that = this;
+            that.isShowTran = true;
             if(that.yqCurNav===type){
                 return
             }
@@ -1041,6 +1038,21 @@ export default {
             }catch(err){
 
             }
+        },
+        handleClick(event,num){
+            let that = this;
+            let content = event.target.dataset.cont;
+            
+            if(content==undefined){return}
+            if(num==1){
+                that.showDetail('',content,'','')
+            }else{
+                let title = event.target.dataset.title;
+                let time = event.target.dataset.time;
+                let auth = event.target.dataset.auth;
+                that.showDetail(title,content,time,auth)
+            }
+            
         }
 	}
 }

@@ -5,7 +5,7 @@
         <div class="modal-content" ref="monthPie" :style="type != 'normal' ? 'width:340px;height:'+height+'px;margin-left:-170px;' : widthStyle">
             <div class="modal-header">
                 <span class="fl">{{title}}</span>
-                <a class="close fs26 fr" v-if="closeBtn" heaf="javascript:void(0);" @click="closeMask">&times;</a>
+                <a class="close fs32 fr" v-if="closeBtn" heaf="javascript:void(0);" @click="closeMask">&times;</a>
             </div>
             <div class="modal-warp">
                 <slot name="mdBox"></slot>
@@ -159,7 +159,7 @@ export default {
     .modal-bg{width:100%;height:100%;background:rgba(0,0,0,.5);}
     .modal-content{position:absolute;top:50%;left:50%;transform:translate(0,-50%);background:#fff;border-radius:4px;}
     .modal-header{height:45px;padding:0 16px;line-height:44px;}
-    .modal-header .close{width:20px;height:20px;margin:11px 0;line-height: 20px}
+    .modal-header .close{width:36px;height:36px;margin:11px 0;line-height: 32px;background-color: #ddd;border-radius: 50%;cursor: pointer;text-align: center}
     .modal-header .close img{margin:4px;}
     .modal-warp{padding:0 24px 24px;}
     .modal-footer{padding:8px 0 24px;}

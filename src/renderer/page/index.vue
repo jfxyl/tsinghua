@@ -224,7 +224,7 @@
                                                             <p class="title fs16 crff ovhidden">{{item.news_title}}</p>
                                                             <p class="crb8">
                                                                 <span>{{item.news_posttime}}</span>
-                                                                <span class="ml20">from：{{item.news_from}}</span>
+                                                                <span class="ml20">from:Tslnghua universlty news</span>
                                                             </p>
                                                         </div>
                                                     </li>
@@ -241,7 +241,7 @@
                                                             <p class="title fs16 crff ovhidden">{{item.news_title}}</p>
                                                             <p class="crb8">
                                                                 <span>{{item.news_posttime}}</span>
-                                                                <span class="ml20">from：{{item.news_from}}</span>
+                                                                <span class="ml20">from:{{item.news_from}}</span>
                                                             </p>
                                                         </div>
                                                     </li>
@@ -326,7 +326,7 @@
                                                     <div class="fl rk1 ac mt6">
                                                         <i class="num" :class="'num'+(index+1)">{{index+1}}</i>
                                                     </div>
-                                                    <div class="fl rk2">
+                                                    <div class="fl rk2" @click="showDetail(item.news_title,item.news_content,item.news_posttime,item.news_author)">
                                                         <!-- <div class="img fl" v-if="item.url!=underfined"><img :src="item.url"></div> -->
                                                         <div class="fem fl">
                                                             <span class="ovhidden ">{{item.wx_nickname}}</span>

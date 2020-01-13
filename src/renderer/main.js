@@ -3,9 +3,11 @@ import axios from 'axios'
 import App from './App'
 import router from './router'
 
+import sqlite3 from './utils/sqlite'
+Vue.prototype.$db = sqlite3
 
 import api from './api/index.js'
-import $ from 'jquery'
+import jquery from 'jquery'
 import utils from './utils/index.js'
 import echarts from 'echarts'
 import echartswordcloud from 'echarts-wordcloud';

@@ -31,7 +31,6 @@ export default {
     methods: {
         cloudOption:function(){
             let _this = this;
-            
             let option = {
                 tooltip: {
                     show: true
@@ -60,18 +59,18 @@ export default {
                     textStyle: {
                         normal: {
                             color: function() {
-                               let color = ["#ffd70f","#00bbff","#ff0000","#23d892","#cfdae5","#8000ff"];
-                               let len = color.length;
-                               return color[parseInt(Math.random()*len)];
-                            // return (
-                            //     "rgb(" +
-                            //     Math.round(Math.random() * 195 + 60) +
-                            //     ", " +
-                            //     Math.round(Math.random() * 195 + 60) +
-                            //     ", " +
-                            //     Math.round(Math.random() * 195 + 60) +
-                            //     ")"
-                            // );
+                            //    let color = ["#ffd70f","#00bbff","#ff0000","#23d892","#cfdae5","#8000ff"];
+                            //    let len = color.length;
+                            //    return color[parseInt(Math.random()*len)];
+                            return (
+                                "rgb(" +
+                                Math.round(Math.random() * 195 + 60) +
+                                ", " +
+                                Math.round(Math.random() * 195 + 60) +
+                                ", " +
+                                Math.round(Math.random() * 195 + 60) +
+                                ")"
+                            );
                             }
                         }
                     },

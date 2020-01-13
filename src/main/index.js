@@ -1,6 +1,34 @@
-import { app, BrowserWindow } from 'electron'
-
+import { app, BrowserWindow, ipcMain} from 'electron'
+const fs = require('fs');
+const path = require('path')
+const crypto = require('crypto');
+const storage = require('electron-localstorage');
 const AutoLaunch = require('auto-launch');
+const DownloadManager = require("electron-download-manager");
+
+
+import sq3 from 'sqlite3';
+const dbPath = path.join(__dirname, '../tsinghua.db')
+
+const sqlite3 = sq3.verbose();
+const db = new sqlite3.Database(dbPath);
+db.serialize(() => {
+  db.run(`CREATE TABLE IF NOT EXISTS DOWNLOADS(
+      id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,
+      url TEXT NOT NULL,
+      url_md5 VARCHAR(50) NOT NULL,
+      filename VARCHAR(1000) NOT NULL,
+      filepath VARCHAR(1000) NOT NULL,
+      status INTEGER NOT NULL
+    )`, err => {
+    console.log(err);
+  });
+});
+
+
+DownloadManager.register({
+  downloadFolder: './download/'
+});
 
 /**
  * 添加开机自启动
@@ -29,6 +57,7 @@ if (shouldQuit) {
  * 禁用缓存
  */
 app.commandLine.appendSwitch('--disable-http-cache')
+app.commandLine.appendSwitch('autoplay-policy', 'no-user-gesture-required');
 
 /**
  * Set `__static` path to static files in production
@@ -60,12 +89,85 @@ function createWindow () {
 
   mainWindow.loadURL(winURL)
 
+  // mainWindow.webContents.openDevTools()
+
   mainWindow.on('closed', () => {
     mainWindow = null
   })
+  // 删掉未记录的下载文件（未记录=未完成）
+  db.all("SELECT * FROM DOWNLOADS where status = 1",function(err,res){
+    let dir = path.resolve('./download/');
+    if(fs.existsSync(dir)){
+      let files = fs.readdirSync(dir);
+      let filenames = [];
+      if(res){
+        filenames = res.map(function(r){
+          return r.filename
+        })
+      }
+      if(filenames){
+        files = files.filter(function(file){
+          return !filenames.includes(file)
+        })
+      }
+      files.forEach((file, index) => {
+        fs.unlinkSync(dir+"\\"+file); //删除文件
+      });
+    }
+  })
+  // let filenames = storage.getItem('filenames')
+  // let dir = path.resolve('./download/');
+  // console.log(filenames)
+  // if(fs.existsSync(dir)){
+  //   let files = fs.readdirSync(dir);
+  //   if(filenames){
+  //     files.filter(function(file){
+  //       return !filenames.includes(file)
+  //     })
+  //   }
+  //   console.log(22222,files)
+  //   files.forEach((file, index) => {
+  //     fs.unlinkSync(dir+"\\"+file); //删除文件
+  //   });
+  // }
 
   require('./menu.js')
   require('./download.js')
+  // require('./download-new.js')
+
+  // ipcMain.on('download', function(event, url) {
+  //   var fileId = crypto.createHash('md5').update(url).digest("hex");
+  //   let fileTask = fileId+'_task';
+  //   let bool = storage.getItem(fileTask)
+  //   if(!bool){
+  //     storage.setItem(fileTask,1)
+  //     DownloadManager.download({
+  //         url: url
+  //     }, function (error, info) {
+  //         if (error) {
+  //             console.log(error);
+  //             return;
+  //         }
+  //         var filepath = path.resolve(info.filePath)
+  //         storage.setItem(fileTask,2)
+  //         storage.setItem(fileId,filepath)
+  //     });
+  //   }else if(bool == 1){
+  //     storage.setItem(fileTask,1)
+  //     DownloadManager.download({
+  //         url: url
+  //     }, function (error, info) {
+  //         if (error) {
+  //             console.log(error);
+  //             return;
+  //         }
+  //         var filepath = path.resolve(info.filePath)
+  //         storage.setItem(fileTask,2)
+  //         storage.setItem(fileId,filepath)
+  //     });
+  //   }
+    
+  // });
 }
 
 app.on('ready', createWindow)

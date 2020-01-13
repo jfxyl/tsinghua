@@ -23,13 +23,13 @@
                     <div class="plane plane-green">
                         <div class="plane-title fs18 cr0f">清华大学微信公众号<i class="icons icon-arrow1 fr"></i></div>
                         <div class="plane-body">
-                            <div class="echart-warp clearfix news-gre" @click="handleClick($event,2)">
+                            <div class="echart-warp clearfix news-gre" @click="handleClick($event,2,'wx')">
                                 <vue-seamless-scroll :data="wxList" :class-option="optionSetting" class="news-warp h148 ">
                                     <ul class="news">
                                         <li class="news-li" v-for="(item,index) in wxList" :key="index" >
                                             <div class="in clearfix">
-                                                <p class="title fs16 crff ovhidden" v-if="parseInt(item.read_num)<100000" :data-title="item.news_title" :data-cont="item.news_content" :data-time="item.news_posttime" :data-auth="item.news_author" @click="showDetail(item.news_title,item.news_content,item.news_posttime,item.news_author)">{{item.news_title}}</p>
-                                                <p class="title fs16 crff ovhidden" v-if="parseInt(item.read_num)>=100000" :data-title="item.news_title" :data-cont="item.news_content" :data-time="item.news_posttime" :data-auth="item.news_author" @click="showDetail(item.news_title,item.news_content,item.news_posttime,item.news_author)"><i class="icons icon-hot"></i><strong>{{item.news_title}}</strong></p>
+                                                <p class="title fs16 crff ovhidden" v-if="parseInt(item.read_num)<100000" :data-title="item.news_title" :data-cont="item.news_content" :data-time="item.news_posttime" :data-auth="item.news_author" >{{item.news_title}}</p>
+                                                <p class="title fs16 crff ovhidden" v-if="parseInt(item.read_num)>=100000" :data-title="item.news_title" :data-cont="item.news_content" :data-time="item.news_posttime" :data-auth="item.news_author"><i class="icons icon-hot"></i><strong>{{item.news_title}}</strong></p>
                                                 <p class="crb8">
                                                     <span>{{item.news_posttime}}</span>
                                                     <span class="ml20">阅读数：{{item.read_num}}</span>
@@ -62,8 +62,8 @@
                                     <ul class="news newscro1">
                                         <li class="news-li" v-for="(item,index) in wbList" :key="index" ref="rollul" :class="{anim:animate.anim1==true}">
                                             <div class="in">
-                                                <p class="title fs16 crff ovhidden" v-if="parseInt(item.read_num)<100000" :data-title="item.news_title" :data-cont="item.news_content" :data-time="item.news_posttime" :data-auth="item.news_author" @click="showDetail(item.news_title,item.news_content,item.news_posttime,item.news_author)">{{item.news_title}}</p>
-                                                <p class="title fs16 crff ovhidden" v-if="parseInt(item.read_num)>=100000" :data-title="item.news_title" :data-cont="item.news_content" :data-time="item.news_posttime" :data-auth="item.news_author" @click="showDetail(item.news_title,item.news_content,item.news_posttime,item.news_author)"><i class="icons icon-hot"></i><strong>{{item.news_title}}</strong></p>
+                                                <p class="title fs16 crff ovhidden" v-if="parseInt(item.read_num)<100000" :data-title="item.news_title" :data-cont="item.news_content" :data-time="item.news_posttime" :data-auth="item.news_author" >{{item.news_title}}</p>
+                                                <p class="title fs16 crff ovhidden" v-if="parseInt(item.read_num)>=100000" :data-title="item.news_title" :data-cont="item.news_content" :data-time="item.news_posttime" :data-auth="item.news_author" ><i class="icons icon-hot"></i><strong>{{item.news_title}}</strong></p>
                                                 <p class="crb8 clearfix">
                                                     <span class="name fl">转发数：{{item.repost_num}}</span>
                                                     <span class="name ac fl">评论数：{{item.comment_num}}</span>
@@ -85,8 +85,8 @@
                                     <ul class="news pt0">
                                         <li class="news-li" v-for="(item,index) in newsList" :key="index">
                                             <div class="in clearfix">
-                                                <p class="title fs16 crff ovhidden" v-if="parseInt(item.read_num)<100000" :data-cont="item.news_content" @click="showDetail('',item.news_content,'','')">{{item.news_title}}</p>
-                                                <p class="title fs16 crff ovhidden" v-if="parseInt(item.read_num)>=100000" :data-cont="item.news_content" @click="showDetail('',item.news_content,'','')"><i class="icons icon-hot"></i><strong>{{item.news_title}}</strong></p>
+                                                <p class="title fs16 crff ovhidden" v-if="parseInt(item.read_num)<100000" :data-cont="item.news_content" >{{item.news_title}}</p>
+                                                <p class="title fs16 crff ovhidden" v-if="parseInt(item.read_num)>=100000" :data-cont="item.news_content" ><i class="icons icon-hot"></i><strong>{{item.news_title}}</strong></p>
                                                 <p class="crb8">
                                                     <span>{{item.news_posttime}}</span>
                                                     <span class="ml20">阅读数：{{item.read_num}}</span>
@@ -109,7 +109,7 @@
                         <i class="icons icon-turn3"></i>
                         <i class="icons icon-turn4"></i>
                         <div class="plane-body por videoWrap h486">
-                            <video class="video1" id="video_id" :src="videoSrc"  width="" height="" :autoplay="videoSet==0" muted></video>
+                            <video class="video1" id="video_id" :src="videoSrc"  width="" height="" :autoplay="videoSet==0" :muted="videoMuted"></video>
                         </div>
                     </div>
                     <div class="clearfix mt27">
@@ -135,7 +135,7 @@
                                             <div class="echart-warp mt0 h155">
                                                 <swiper :options="swiperOption" class="reportLi" v-if="reportList!=''">
                                                     <swiper-slide class="item" v-for="(item,index) in reportList" :key="index" >
-                                                        <p  @click="showReport(item.img_url)"><img :src="item.img_url" @error="findLocalImg(item.img_url)" alt=""></p>
+                                                        <p ><img :src="item.img_url" @error="findLocalImg(item.img_url)" alt=""></p>
                                                     </swiper-slide>
                                                     <div class="swiper-pagination "  slot="pagination"></div>	
                                                 </swiper>
@@ -149,7 +149,7 @@
                                                     <ul class="news pt0">
                                                         <li class="news-li" v-for="(item,index) in buildList" :key="index">
                                                             <div class="in clearfix">
-                                                                <p class="title fs16 crff ovhidden" :data-title="item.news_title" :data-cont="item.news_content" :data-time="item.news_posttime" :data-auth="item.news_author" @click="showDetail(item.news_title,item.news_content,item.news_posttime,item.news_author)">{{item.news_title}}</p>
+                                                                <p class="title fs16 crff ovhidden" :data-title="item.news_title" :data-cont="item.news_content" :data-time="item.news_posttime" :data-auth="item.news_author" >{{item.news_title}}</p>
                                                                 <p class="crb8">
                                                                     <span>{{item.news_posttime}}</span>
                                                                 </p>
@@ -166,7 +166,7 @@
                         <div class="plane w379 h393 mt12 fr">
                             <div class="plane-body douyin-l pt0 por">
                                 <!-- <div id="poster_img2"></div> -->
-                                <video class="video1" id="video_id2" :src="dyVideoSrc"  width="" height="" :autoplay="douyinSet==0" muted></video>
+                                <video class="video1" id="video_id2" :src="dyVideoSrc"  width="" height="" :autoplay="douyinSet==0" :muted="douyinMuted"></video>
                             </div>
                             <div class="douyin-r fr">
                                 <div class="plane-title1">清华大学</div>
@@ -191,7 +191,7 @@
                                 <vue-seamless-scroll :data="hotList" :class-option="optionSetting3" class="news-warp h206">
                                     <ul class="news">
                                         <li class="news-li hotNew clearfix" v-for="(item,index) in hotList" :key="index" >
-                                            <div class="pro fs16 ovhidden" :class="'newTit'+item.ind"  :data-title="item.news_title" :data-cont="item.news_content" :data-time="item.news_posttime" :data-auth="item.news_author" @click="showDetail(item.news_title,item.news_content,item.news_posttime,item.news_author)">
+                                            <div class="pro fs16 ovhidden" :class="'newTit'+item.ind"  :data-title="item.news_title" :data-cont="item.news_content" :data-time="item.news_posttime" :data-auth="item.news_author" >
                                                 <p class="fr" v-if="item.ind<=3">
                                                     <span v-for="i of (4-item.ind)" :key="i"><img class="" src="static/images/fire.png"></span>
                                                 </p>
@@ -221,7 +221,7 @@
                                                 <ul class="news pt0">
                                                     <li class="news-li" v-for="(item,index) in communiList" :key="index">
                                                         <div class="in clearfix">
-                                                            <p class="title fs16 crff ovhidden" :data-cont="item.news_content" @click="showDetail('',item.news_content,'','')">{{item.news_title}}</p>
+                                                            <p class="title fs16 crff ovhidden" :data-cont="item.news_content" >{{item.news_title}}</p>
                                                             <p class="crb8">
                                                                 <span>{{item.news_posttime}}</span>
                                                                 <span class="ml20">from:Tslnghua universlty news</span>
@@ -238,7 +238,7 @@
                                                 <ul class="news pt0">
                                                     <li class="news-li" v-for="(item,index) in mediaList" :key="index">
                                                         <div class="in clearfix">
-                                                            <p class="title fs16 crff ovhidden" :data-title="item.news_title" :data-cont="item.news_content" :data-time="item.news_posttime" :data-auth="item.news_author" @click="showDetail(item.news_title,item.news_content,item.news_posttime,item.news_author)">{{item.news_title}}</p>
+                                                            <p class="title fs16 crff ovhidden" :data-title="item.news_title" :data-cont="item.news_content" :data-time="item.news_posttime" :data-auth="item.news_author" >{{item.news_title}}</p>
                                                             <p class="crb8">
                                                                 <span>{{item.news_posttime}}</span>
                                                                 <span class="ml20">from:{{item.news_from}}</span>
@@ -273,7 +273,7 @@
                                                 <div class="fl rk2">账号</div>
                                                 <div class="fl rk3">WCI</div>
                                             </div>
-                                            <ul class="rank bd por">
+                                            <ul class="rank bd por" v-if="rankList.day">
                                                 <li class="clearfix" v-for="(item,index) in rankList.day" :key="index">
                                                     <div class="fl rk1 ac mt6">
                                                         <i class="num" :class="'num'+(index+1)">{{index+1}}</i>
@@ -317,10 +317,10 @@
                                     <div class="item slide-item1" :class="carouse2">
                                         <div class="table-warp">
                                             <div class="rank mb5 fs16 fw7 clearfix">近七天热文</div>
-                                            <ul class="rank bd por" @click="handleClick($event,2)">
+                                            <ul class="rank bd por">
                                                 <li class="news-li clearfix" v-for="(item,index) in rankList.news" :key="index">
                                                    <div class="">
-                                                        <p class="ovhidden fs16" :data-title="item.news_title" :data-cont="item.news_content" :data-time="item.news_posttime" :data-auth="item.news_author" @click="showDetail(item.news_title,item.news_content,item.news_posttime,item.news_author)"><i class="num ac" :class="'num'+(index+1)">{{index+1}}</i>{{item.news_title}}</p>
+                                                        <p class="ovhidden fs16" @click="showDetail(item.news_title,item.news_content,item.news_posttime,item.news_author,'wx')"><i class="num ac" :class="'num'+(index+1)">{{index+1}}</i>{{item.news_title}}</p>
                                                         <span class="ovhidden crb8 mt6"><span>作者：{{item.news_author}}</span><span class="ml20">{{item.news_posttime}}</span></span>
                                                     </div>
                                                 </li>
@@ -332,24 +332,28 @@
                         </div>
                     </div>
                 </div>
-
             </div>
            
         </div>
         <Dialog ref="aticleDialog" width="1280" title="">
             <div slot="mdBox">
-                <h4 class="atiTit ac fs28 mb28">{{artTitle}}</h4>
-                <p class="atiTit mt27"><span>{{artAuth}}</span><span class="ml20">{{artTime}}</span></p>
-                <vue-scroll class="mt27" :ops="ops" :style="'width:100%;height:'+opsHeight+'px'">
-                    <div class="atiCont" v-html="artContent" ref="cont">{{artContent}}</div>
-                </vue-scroll>
+                
+                <div class="artBlock">
+                    <vue-scroll class="mt27" :ops="ops" :style="'width:100%;height:'+opsHeight+'px'" ref="cont">
+                        <h4 class="atiTit ac fs28 mb28" v-if="artTitle!=''">{{artTitle}}</h4>
+                        <p class="atiTit mt27" v-if="artTime!='' && artAuth != ''"><span>{{artAuth}}</span><span class="ml20">{{artTime}}</span></p>
+                        <div class="atiCont" v-html="artContent">{{artContent}}</div>
+                    </vue-scroll>
+                </div>
             </div>
         </Dialog>
         <Dialog ref="reportDialog" width="1280" title="">
             <div slot="mdBox">
-                <vue-scroll class="mt27" :ops="ops" :style="'width:100%;height:'+opsHeight+'px'">
-                    <div class="atiCont" v-if="artImg!=''"><img :src="artImg" alt=""></div>
-                </vue-scroll>
+                <div class="artBlock">
+                    <vue-scroll class="mt27" :ops="ops" :style="'width:100%;height:'+opsHeight+'px'" ref="cont1">
+                        <div class="atiCont" v-if="artImg!=''"><img :src="artImg" alt=""></div>
+                    </vue-scroll>
+                </div>
             </div>
         </Dialog>
 	</div>
@@ -365,7 +369,14 @@
  const crypto = require('crypto');
  const storage = require('electron-localstorage');
  const fs = require('fs');
-
+//  window.addEventListener('online',  function(){
+//      console.log('online')
+//      ipcRenderer.send('electron-online','electron-online')
+//  })
+//  window.addEventListener('offline',  function(){
+//      console.log('offline')
+//      ipcRenderer.send('electron-offline','electron-offline')
+//  })
 export default {
     components:{
         cloudChart,vueSeamlessScroll,QRCode,swiper,swiperSlide,Dialog
@@ -427,7 +438,7 @@ export default {
                 loop:true,
                 loopFillGroupWithBlank: true,
                 autoplay: {
-                    delay: 30000,
+                    delay: 3000,
                     disableOnInteraction: false,
                 },
                 speed:600, //config参数同swiper4,与官网一致
@@ -440,7 +451,7 @@ export default {
                         if(e.srcElement.currentSrc!=undefined){
                             vm.showReport(e.srcElement.currentSrc)   //要执行函数
                         }
-                    }
+                    },
                   },
             },
             artTitle:'',//文章标题
@@ -462,9 +473,11 @@ export default {
                     background: '#c4c4cc',
                 }
             },
-            opsHeight:'700',
+            opsHeight:'800',
             videoSet:0,  //视频设置 0.默认播放 1.默认暂停
             douyinSet:0,  //抖音设置 0.默认播放 1.默认暂停
+            videoMuted:1,   //视频音频设置 0.默认播放 1.默认静音
+            douyinMuted:1,  //抖音音频设置 0.默认播放 1.默认静音
         }
     },
     created() {
@@ -484,37 +497,92 @@ export default {
             that.videoAjax();
             setInterval(() => {
                 that.$refs.cloudChart.init();
-            }, 10000);
-            setInterval(that.haveChange,60000)
+            }, 15000);
+            setInterval(that.haveChange,10000)
 
             var myVideo=document.getElementById("video_id");
             myVideo.addEventListener('error',function(){
+                console.log('1error')
                 if(that.videoSrc){
-                    var fileId = crypto.createHash('md5').update(that.videoSrc).digest("hex");
-                    var filepath = storage.getItem(fileId);
-                    try{
-                        fs.accessSync(filepath,fs.constants.F_OK)
-                        that.videoSrc = 'file://' + filepath
-                    }catch(err){
-
-                    }
+                    that.$db.get("SELECT * FROM DOWNLOADS where url = ? and status = 1",that.videoSrc,function(err,res){
+                        if(res){
+                            let filepath = res.filepath
+                            console.log(filepath)
+                            try{
+                                fs.accessSync(filepath,fs.constants.F_OK)
+                                that.videoSrc = 'file://' + filepath
+                                myVideo.play()
+                            }catch(err){
+                                that.play('video_id')
+                            }
+                        }
+                    })
                 }
             });
+            myVideo.addEventListener('waiting',function(){
+                console.log('1waiting')
+                console.log(navigator.onLine)
+                if(navigator.onLine){
+                    return;
+                }
+                if(that.videoSrc){
+                    that.$db.get("SELECT * FROM DOWNLOADS where url = ? and status = 1",that.videoSrc,function(err,res){
+                        if(res){
+                            let filepath = res.filepath
+                            try{
+                                fs.accessSync(filepath,fs.constants.F_OK)
+                                that.videoSrc = 'file://' + filepath
+                                myVideo.play()
+                            }catch(err){
+                                that.play('video_id')
+                            }
+                        }
+                    })
+                }
+            });
+
             var myVideo2=document.getElementById("video_id2");
             myVideo2.addEventListener('error',function(){
+                console.log('2error')
                 if(that.dyVideoSrc){
-                    var fileId = crypto.createHash('md5').update(that.dyVideoSrc).digest("hex");
-                    var filepath = storage.getItem(fileId);
-                    console.log('dyVideoSrc:'+filepath)
-                    try{
-                        fs.accessSync(filepath,fs.constants.F_OK)
-                        that.dyVideoSrc = 'file://' + filepath
-                    }catch(err){
-
-                    }
+                    that.$db.get("SELECT * FROM DOWNLOADS where url = ? and status = 1",that.dyVideoSrc,function(err,res){
+                        if(res){
+                            let filepath = res.filepath
+                            console.log(filepath)
+                            try{
+                                fs.accessSync(filepath,fs.constants.F_OK)
+                                that.dyVideoSrc = 'file://' + filepath
+                                myVideo2.play()
+                            }catch(err){
+                                that.play('video_id2')
+                            }
+                        }
+                    })
                 }
             });
-        }) 
+            myVideo2.addEventListener('waiting',function(){
+                console.log('2waiting')
+                console.log(navigator.onLine)
+                if(navigator.onLine){
+                    return;
+                }
+                if(that.dyVideoSrc){
+                    that.$db.get("SELECT * FROM DOWNLOADS where url = ? and status = 1",that.dyVideoSrc,function(err,res){
+                        if(res){
+                            let filepath = res.filepath
+                            try{
+                                fs.accessSync(filepath,fs.constants.F_OK)
+                                that.dyVideoSrc = 'file://' + filepath
+                                myVideo2.play()
+                            }catch(err){
+                                that.play('video_id2')
+                            }
+                        }
+                    })
+                }
+            });
+
+        })
     },
     computed: {
         optionSetting () {
@@ -570,10 +638,6 @@ export default {
     },
 
     methods: {
-        time(t){
-            let tm = t.split(' ')[0];
-            return tm.split('-').join('/');
-        },
         filterNum(val){
             return parseFloat(val).toFixed(2)
         },
@@ -588,19 +652,33 @@ export default {
              that.$api.get('config',null,r =>{
                 that.$parent.returnCode(r,function(){
                     let data = r.data;
-                    // that.videoSet = data.video_setting;
+                    that.videoSet = data.video_setting;
                     let video = document.getElementById("video_id");
                     if(that.videoSet==0){
                         video.play();
                     }else{
                         video.pause();
                     }
-                    // that.douyinSet = data.douyin_status;
+                    that.douyinSet = data.douyin_status;
                     let video2 = document.getElementById("video_id2");
                     if(that.douyinSet==0){
                         video2.play();
                     }else{
                         video2.pause();
+                    }
+
+                    if(data.video_output == 0){
+                        //开启本地视频音频
+                        that.douyinMuted = 1;
+                        that.videoMuted = 0;
+                    }else if(data.video_output == 1){
+                        //开启抖音视频音频
+                        that.videoMuted = 1;
+                        that.douyinMuted = 0;
+                    }else{
+                        //全部静音
+                        that.videoMuted = 1;
+                        that.douyinMuted = 1;
                     }
                 })
             });
@@ -622,11 +700,15 @@ export default {
                     })
                     that.hotList = data.hot_data;
 
-                    localStorage.setItem('wxList',JSON.stringify(that.wxList))
-                    localStorage.setItem('wbAcount',JSON.stringify(that.wbAcount))
-                    localStorage.setItem('wbList',JSON.stringify(that.wbList))
-                    localStorage.setItem('newsList',JSON.stringify(that.newsList))
-                    localStorage.setItem('hotList',JSON.stringify(that.hotList))
+                     localStorage.setItem('wxList',JSON.stringify(that.wxList))
+                     that.handleData(that.wxList,'news_content')
+                     localStorage.setItem('wbAcount',JSON.stringify(that.wbAcount))
+                     localStorage.setItem('wbList',JSON.stringify(that.wbList))
+                     that.handleData(that.wbList,'news_content')
+                     localStorage.setItem('newsList',JSON.stringify(that.newsList))
+                     that.handleData(that.newsList,'news_content')
+                     localStorage.setItem('hotList',JSON.stringify(that.hotList))
+                     that.handleData(that.hotList,'news_content')
                 })
             },null,e => {
                 let that = this;
@@ -653,18 +735,27 @@ export default {
                     that.bkTimer = setTimeout(that.bkScroll,38000,1)
 
                     that.reportList.forEach(element => {
-                        console.log(element)
                         ipcRenderer.send('download', element.img_url)
                     });
 
                     localStorage.setItem('reportList',JSON.stringify(that.reportList))
                     localStorage.setItem('buildList',JSON.stringify(that.buildList))
+                    that.handleData(that.buildList,'news_content')
                 })
             },null,e => {
                 let that = this;
                 let reportList = JSON.parse(localStorage.getItem('reportList'))
                 let buildList = JSON.parse(localStorage.getItem('buildList'))
+                reportList.forEach(element=>{
+                    var fileId = crypto.createHash('md5').update(element.img_url).digest("hex");
+                    var filepath = storage.getItem(fileId);
+                    try{
+                        fs.accessSync(filepath,fs.constants.F_OK)
+                        element.img_url = filepath
+                    }catch(err){
 
+                    }
+                })
                 if(reportList) that.reportList = reportList
                 if(buildList) that.buildList = buildList
                 that.bkTimer = setTimeout(that.bkScroll,38000,1)
@@ -700,11 +791,11 @@ export default {
                 that.$parent.returnCode(r,function(){
                     if(r.data != null){
                         that.rankList.day = r.data.day.slice(0,5);
+                        console.log(that.rankList.day)
                         that.rankList.week = r.data.week.slice(0,5);
                         that.rankList.news = r.data.news.slice(0,5);
-                        that.timer = setTimeout(that.scroll,20000,1)
+                        that.timer = setTimeout(that.scroll,4500,1)
 
-                        console.log(that.rankList)
                         localStorage.setItem('rankList',JSON.stringify(that.rankList))
                     }
                 })
@@ -742,8 +833,8 @@ export default {
             }
             let video = document.getElementById(id);
             that.videoSrc = that.videoList[that.currVideo].video_url;
-            video.load(); 
-            video.play();
+            // video.load(); 
+            // video.play();
             that.currVideo++;
             if(that.currVideo >= that.vLen){
                 that.currVideo = 0; // 播放完了，重新播放 
@@ -753,35 +844,23 @@ export default {
             let that = this;
             that.$api.get('get-video',null,r =>{
                 that.$parent.returnCode(r,function(){
-                    if(that.videoList.length<=0){
-                        that.videoList = r.data.video;
-                    }else{
-                        if(JSON.stringify(that.videoList)!=JSON.stringify(r.data.video)){
-                            that.videoList = r.data.video;
-                        }else{
-                            return
-                        }
-                    }
+                    that.videoList = r.data.video;
                     localStorage.setItem('videoList',JSON.stringify(that.videoList))
                     that.videoList.forEach(element => {
-                        console.log(element)
                         ipcRenderer.send('download', element.video_url)
                     });
 
-
                     that.dyVideoList = r.data.douyin;
-                    // that.dyVideoList.shift()
+                    localStorage.setItem('dyVideoList',JSON.stringify(that.dyVideoList))
                     that.dyVideoList.forEach(element => {
-                        console.log(element)
                         ipcRenderer.send('download', element.local_url)
                     });
-                    localStorage.setItem('dyVideoList',JSON.stringify(that.dyVideoList))
                     
                     that.vLen = that.videoList.length;//播放列表的长度
                     let video = document.getElementById("video_id");
                     that.videoSrc = that.videoList[0].video_url;
-                    video.load();
-                    video.play();
+                    // video.load();
+                    // video.play();
                     that.lvId = that.videoList[0].id;
                     video.addEventListener('ended', function(){
                         that.play('video_id');
@@ -800,8 +879,8 @@ export default {
                 let video = document.getElementById("video_id");
                 if(!that.videoSrc){
                     that.videoSrc = that.videoList[0].video_url;
-                    video.load();
-                    video.play();
+                    // video.load();
+                    // video.play();
                 }
                 that.lvId = that.videoList[0].id;
                 video.addEventListener('ended', function(){
@@ -822,8 +901,8 @@ export default {
             that.qrcode();
             let video = document.getElementById(id);
             that.dyVideoSrc = that.dyVideoList[that.dyCurr].local_url;
-            video.load(); 
-            video.play();
+            // video.load(); 
+            // video.play();
             that.dyCurr++;
             if(that.dyCurr >= that.vLen2){
                 that.dyCurr = 0; // 播放完了，重新播放 
@@ -842,10 +921,11 @@ export default {
             //that.dyVideoList =[ 'static/images/i/movie.ogg','static/images/i/movie.mp4', 'https://aweme.snssdk.com/aweme/v1/playwm/?video_id=v0300fcc0000bldqfe1q8b1hnh4kjrg0&amp;line=0'];
             that.vLen2 = that.dyVideoList.length;//播放列表的长度
             let video = document.getElementById("video_id2");
+            document.getElementById("qrcode").innerHTML='';
             that.qrcode();
             that.dyVideoSrc = that.dyVideoList[0].local_url;
-            video.load();
-            video.play();
+            // video.load();
+            // video.play();
             // video.addEventListener("play",function(){
             //     $("#poster_img2").hide();
             // });
@@ -1014,13 +1094,21 @@ export default {
                 that.timer = setTimeout(that.scroll,30000,tempType)
             },1000);
         },
-        showDetail(title,content,time,auth){
+        showDetail(title,content,time,auth,type = null){
             let that = this;
             that.artTitle = title;
+            if(!navigator.onLine){
+                content = that.remote2local(content)
+            }else{
+                // 在线的话也需要处理微信图片路径存在data-src及防盗链的问题
+                // 微信公众号文章默认使用本地图片
+                if(type == 'wx'){
+                    content = that.remote2local(content)
+                }
+            }
             that.artContent = content;
             that.artAuth= auth;
             that.artTime = time;
-            //that.opsHeight = that.$refs.cont.offsetHeight;
             that.$refs.aticleDialog.showMaskFun();  
         },
         showReport(img){
@@ -1029,9 +1117,9 @@ export default {
             that.$refs.reportDialog.showMaskFun();  
         },
         findLocalImg(src){
-            var fileId = crypto.createHash('md5').update(src).digest("hex");
-            var filepath = storage.getItem(fileId);
-            console.log(filepath)
+            // var fileId = crypto.createHash('md5').update(src).digest("hex");
+            // var filepath = storage.getItem(fileId);
+            var filepath = this.findFilePath(src);
             try{
                 fs.accessSync(filepath,fs.constants.F_OK)
                 event.target.src =  'file://'+filepath
@@ -1039,21 +1127,50 @@ export default {
 
             }
         },
-        handleClick(event,num){
+        handleClick(event,num,type = null){
             let that = this;
             let content = event.target.dataset.cont;
             
             if(content==undefined){return}
             if(num==1){
-                that.showDetail('',content,'','')
+                that.showDetail('',content,'','',type)
             }else{
                 let title = event.target.dataset.title;
                 let time = event.target.dataset.time;
                 let auth = event.target.dataset.auth;
-                that.showDetail(title,content,time,auth)
+                that.showDetail(title,content,time,auth,type)
             }
-            
-        }
+        },  
+        handleData(data,type){
+            let reg = /<img.*?src=["|'](.*?)["|'].*?\/?>/mg
+            data.forEach(element => {
+                let imgs = element[type].match(reg)
+                for(var i in imgs){
+                    let info = reg.exec(imgs[i])
+                    if(info){
+                        ipcRenderer.send('download', info[1])
+                    }
+                }
+            });
+        },
+        remote2local(content){
+            let reg1 = /(<img.*?)(data-src)(=.*?\/?>)/mg
+            content = content.replace(reg1,function(match,$1,$2,$3){
+                return $1 + 'src' + $3;
+            })
+            let reg2 = /(<img.*? src=["|'])(.*?)(["|'].*?\/?>)/mg
+            content = content.replace(reg2,function(match,$1,$2,$3){
+                var fileId = crypto.createHash('md5').update($2).digest("hex");
+                var filepath = storage.getItem(fileId);
+                try{
+                    fs.accessSync(filepath,fs.constants.F_OK)
+                    return $1 + 'file://'+filepath + $3
+                }catch(err){
+                    return "";
+                }
+            })
+            return content
+        },
 	}
 }
 </script>

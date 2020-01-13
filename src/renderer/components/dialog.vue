@@ -78,7 +78,7 @@ export default {
             timer:'',
             loadText:'请稍后.',
             widthStyle:'',
-            height:'800',
+            height:'',
             cancelText:'取消',
             diff:30000,//未操作触发间隔
             firstTime : new Date().getTime(),
@@ -113,6 +113,13 @@ export default {
             that.mouseStop();
         },
         closeMask(){
+            let that = this
+            that.$parent.$refs['cont'].scrollTo({
+                y: '0'
+            },0);
+            that.$parent.$refs['cont1'].scrollTo({
+                y: '0'
+            },0);
             this.showMask = false;
             clearInterval(this.timer);
             // this.height = '';
@@ -157,7 +164,7 @@ export default {
 <style scoped>
     .modal{position:absolute;top:0;left:0;width:100%;height:100%;z-index:999;color: #333}
     .modal-bg{width:100%;height:100%;background:rgba(0,0,0,.5);}
-    .modal-content{position:absolute;top:50%;left:50%;transform:translate(0,-50%);background:#fff;border-radius:4px;}
+    .modal-content{position:absolute;top:50%;left:50%;transform:translate(0,-50%);background:#fff;border-radius:4px;overflow: hidden;}
     .modal-header{height:45px;padding:0 16px;line-height:44px;}
     .modal-header .close{width:36px;height:36px;margin:11px 0;line-height: 32px;background-color: #ddd;border-radius: 50%;cursor: pointer;text-align: center}
     .modal-header .close img{margin:4px;}

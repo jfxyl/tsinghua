@@ -2,13 +2,14 @@ import { app, BrowserWindow, ipcMain} from 'electron'
 const fs = require('fs');
 const path = require('path')
 const crypto = require('crypto');
-const storage = require('electron-localstorage');
+// const storage = require('electron-localstorage');
 const AutoLaunch = require('auto-launch');
-const DownloadManager = require("electron-download-manager");
+// const DownloadManager = require("electron-download-manager");
 
 
 import sq3 from 'sqlite3';
-const dbPath = path.join(__dirname, '../tsinghua.db')
+let configDir = app.getPath('userData');
+const dbPath = path.join(configDir, 'tsinghua.db')
 
 const sqlite3 = sq3.verbose();
 const db = new sqlite3.Database(dbPath);
@@ -26,9 +27,10 @@ db.serialize(() => {
 });
 
 
-DownloadManager.register({
-  downloadFolder: './download/'
-});
+
+// DownloadManager.register({
+//   downloadFolder: './download/'
+// });
 
 /**
  * 添加开机自启动
@@ -56,7 +58,7 @@ if (shouldQuit) {
 /**
  * 禁用缓存
  */
-app.commandLine.appendSwitch('--disable-http-cache')
+// app.commandLine.appendSwitch('--disable-http-cache')
 app.commandLine.appendSwitch('autoplay-policy', 'no-user-gesture-required');
 
 /**
@@ -88,6 +90,14 @@ function createWindow () {
   // mainWindow.setFullScreen(true)
 
   mainWindow.loadURL(winURL)
+
+  // 凌晨2点刷新
+  setInterval(() => {
+    var date = new Date()
+    if(date.getHours() == 2 && date.getMinutes() == 0){
+      mainWindow.webContents.reload()
+    }
+  }, 60000);
 
   // mainWindow.webContents.openDevTools()
 

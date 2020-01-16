@@ -109,7 +109,7 @@
                         <i class="icons icon-turn3"></i>
                         <i class="icons icon-turn4"></i>
                         <div class="plane-body por videoWrap h486">
-                            <video class="video1" id="video_id" :src="videoSrc"  width="" height="" :autoplay="videoSet==0" :muted="videoMuted"></video>
+                            <video class="video1" id="video_id" :src="videoSrc" width="" height="" :autoplay="videoSet==0" :muted="videoMuted"></video>
                         </div>
                     </div>
                     <div class="clearfix mt27">
@@ -133,7 +133,7 @@
                                     <div class="item slide-item1" :class="bkCarouse0">
                                         <div class="plane-body pt0">
                                             <div class="echart-warp mt0 h155">
-                                                <swiper :options="swiperOption" class="reportLi" v-if="reportList!=''">
+                                                <swiper :options="swiperOption" class="reportLi" v-if="reportList!=''" ref="goodSwiper">
                                                     <swiper-slide class="item" v-for="(item,index) in reportList" :key="index" >
                                                         <p ><img :src="item.img_url" @error="findLocalImg(item.img_url)" alt=""></p>
                                                     </swiper-slide>
@@ -369,14 +369,7 @@
  const crypto = require('crypto');
  const storage = require('electron-localstorage');
  const fs = require('fs');
-//  window.addEventListener('online',  function(){
-//      console.log('online')
-//      ipcRenderer.send('electron-online','electron-online')
-//  })
-//  window.addEventListener('offline',  function(){
-//      console.log('offline')
-//      ipcRenderer.send('electron-offline','electron-offline')
-//  })
+
 export default {
     components:{
         cloudChart,vueSeamlessScroll,QRCode,swiper,swiperSlide,Dialog
@@ -437,6 +430,8 @@ export default {
                 slidesPerGroup: 4,
                 loop:true,
                 loopFillGroupWithBlank: true,
+                observer:true,//修改swiper自己或子元素时，自动初始化swiper
+                observeSlideChildren:true,
                 autoplay: {
                     delay: 3000,
                     disableOnInteraction: false,
@@ -447,7 +442,7 @@ export default {
                     clickable :true,
                 },
                 on:{
-                    click: function(e){
+                    tap: function(e){
                         if(e.srcElement.currentSrc!=undefined){
                             vm.showReport(e.srcElement.currentSrc)   //要执行函数
                         }
@@ -499,15 +494,15 @@ export default {
                 that.$refs.cloudChart.init();
             }, 15000);
             setInterval(that.haveChange,10000)
+            setInterval(that.haveChange1,60000)
+            setInterval(that.haveChange2,43200000)
 
             var myVideo=document.getElementById("video_id");
             myVideo.addEventListener('error',function(){
-                console.log('1error')
                 if(that.videoSrc){
                     that.$db.get("SELECT * FROM DOWNLOADS where url = ? and status = 1",that.videoSrc,function(err,res){
                         if(res){
                             let filepath = res.filepath
-                            console.log(filepath)
                             try{
                                 fs.accessSync(filepath,fs.constants.F_OK)
                                 that.videoSrc = 'file://' + filepath
@@ -520,8 +515,6 @@ export default {
                 }
             });
             myVideo.addEventListener('waiting',function(){
-                console.log('1waiting')
-                console.log(navigator.onLine)
                 if(navigator.onLine){
                     return;
                 }
@@ -540,29 +533,28 @@ export default {
                     })
                 }
             });
+            myVideo.addEventListener('ended', function(){
+                that.play('video_id');
+            });
 
             var myVideo2=document.getElementById("video_id2");
             myVideo2.addEventListener('error',function(){
-                console.log('2error')
                 if(that.dyVideoSrc){
                     that.$db.get("SELECT * FROM DOWNLOADS where url = ? and status = 1",that.dyVideoSrc,function(err,res){
                         if(res){
                             let filepath = res.filepath
-                            console.log(filepath)
                             try{
                                 fs.accessSync(filepath,fs.constants.F_OK)
                                 that.dyVideoSrc = 'file://' + filepath
                                 myVideo2.play()
                             }catch(err){
-                                that.play('video_id2')
+                                that.play2('video_id2')
                             }
                         }
                     })
                 }
             });
             myVideo2.addEventListener('waiting',function(){
-                console.log('2waiting')
-                console.log(navigator.onLine)
                 if(navigator.onLine){
                     return;
                 }
@@ -575,16 +567,21 @@ export default {
                                 that.dyVideoSrc = 'file://' + filepath
                                 myVideo2.play()
                             }catch(err){
-                                that.play('video_id2')
+                                that.play2('video_id2')
                             }
                         }
                     })
                 }
             });
-
+            myVideo2.addEventListener('ended', function(){
+                that.play2('video_id2');
+            });
         })
     },
     computed: {
+        swiper(){
+            this.$refs.goodSwiper.swiper
+        },
         optionSetting () {
             return {
                 step: 4, // 数值越大速度滚动越快
@@ -646,6 +643,16 @@ export default {
             that.configAjax()
             that.wordCloudAjax();
             that.videoAjax();
+            that.reportAjax();
+        },
+        haveChange1(){
+            let that = this;
+            that.allAjax();
+            that.overseaAjax();
+        },
+        haveChange2(){
+            let that = this;
+            that.rankAjax();
         },
         configAjax(){
             let that = this;
@@ -730,10 +737,19 @@ export default {
             that.$api.get('get-xiaobao',null,r =>{
                 that.$parent.returnCode(r,function(){
                     let data = r.data
-                    that.reportList = data.img_data;
                     that.buildList = data.news_data;
-                    that.bkTimer = setTimeout(that.bkScroll,38000,1)
 
+                    if(JSON.stringify(that.reportList) != JSON.stringify(data.img_data)){
+                        if(that.reportList!=''){
+                            that.$refs.goodSwiper.swiper.destroy();
+                        }
+                        that.reportList = data.img_data;
+                        setTimeout(function(){
+                            that.$refs.goodSwiper.mountInstance()
+                        },0);
+                    }
+                    if(!that.bkTimer) that.bkTimer = setTimeout(that.bkScroll,38000,1)
+                    
                     that.reportList.forEach(element => {
                         ipcRenderer.send('download', element.img_url)
                     });
@@ -756,9 +772,10 @@ export default {
 
                     }
                 })
+
                 if(reportList) that.reportList = reportList
                 if(buildList) that.buildList = buildList
-                that.bkTimer = setTimeout(that.bkScroll,38000,1)
+                if(!that.bkTimer) that.bkTimer = setTimeout(that.bkScroll,38000,1)
             });
         },
         //全球传播Global Communication
@@ -791,7 +808,6 @@ export default {
                 that.$parent.returnCode(r,function(){
                     if(r.data != null){
                         that.rankList.day = r.data.day.slice(0,5);
-                        console.log(that.rankList.day)
                         that.rankList.week = r.data.week.slice(0,5);
                         that.rankList.news = r.data.news.slice(0,5);
                         that.timer = setTimeout(that.scroll,4500,1)
@@ -827,18 +843,29 @@ export default {
         //本地视频
         play(id){
             let that = this;
-            if(that.firstTime){
-                that.firstTime=false;
-                that.currVideo = 1;
-            }
-            let video = document.getElementById(id);
-            that.videoSrc = that.videoList[that.currVideo].video_url;
-            // video.load(); 
-            // video.play();
             that.currVideo++;
             if(that.currVideo >= that.vLen){
                 that.currVideo = 0; // 播放完了，重新播放 
             }
+            let video = document.getElementById(id);
+            console.log(that.videoList,that.currVideo)
+            console.log(that.videoList[that.currVideo].video_url)
+            that.$db.get("SELECT * FROM DOWNLOADS where url = ? and status = 1",that.videoList[that.currVideo].video_url,function(err,res){
+                console.log('中间视频play()',that.videoList[that.currVideo].video_url)
+                console.log(res)
+                if(res){
+                    let filepath = res.filepath
+                    console.log(filepath)
+                    console.log(fs.existsSync(filepath))
+                    if(fs.existsSync(filepath)){
+                        that.videoSrc = 'file://' + filepath
+                    }else{
+                        that.videoSrc = that.videoList[that.currVideo].video_url;
+                    }
+                }else{
+                    that.videoSrc = that.videoList[that.currVideo].video_url;
+                }
+            })
         },
         videoAjax(){
             let that = this;
@@ -858,14 +885,25 @@ export default {
                     
                     that.vLen = that.videoList.length;//播放列表的长度
                     let video = document.getElementById("video_id");
-                    that.videoSrc = that.videoList[0].video_url;
-                    // video.load();
-                    // video.play();
-                    that.lvId = that.videoList[0].id;
-                    video.addEventListener('ended', function(){
-                        that.play('video_id');
-                    });
-                    that.dyVideoAjax();
+                    if(!that.videoSrc){
+                        that.$db.get("SELECT * FROM DOWNLOADS where url = ? and status = 1",that.videoList[0].video_url,function(err,res){
+                            console.log('中间视频videoAjax()',that.videoList[0].video_url)
+                            console.log(res)
+                            if(res){
+                                let filepath = res.filepath
+                                if(fs.existsSync(filepath)){
+                                    that.videoSrc = 'file://' + filepath
+                                }else{
+                                    that.videoSrc = that.videoList[0].video_url;
+                                }
+                            }else{
+                                that.videoSrc = that.videoList[0].video_url;
+                            }
+                        })
+                    }
+                    if(!that.dyVideoSrc){
+                        that.dyVideoAjax();
+                    }
                 })
              },null,e => {
                 let that = this
@@ -879,13 +917,8 @@ export default {
                 let video = document.getElementById("video_id");
                 if(!that.videoSrc){
                     that.videoSrc = that.videoList[0].video_url;
-                    // video.load();
-                    // video.play();
                 }
-                that.lvId = that.videoList[0].id;
-                video.addEventListener('ended', function(){
-                    that.play('video_id');
-                });
+                
                 if(!that.dyVideoSrc){
                     that.dyVideoAjax();
                 }
@@ -893,20 +926,27 @@ export default {
         },
         play2(id){
             let that = this;
-            if(that.firstTime2){
-                that.firstTime2=false;
-                that.dyCurr = 1;
-            }
-            document.getElementById("qrcode").innerHTML='';
-            that.qrcode();
-            let video = document.getElementById(id);
-            that.dyVideoSrc = that.dyVideoList[that.dyCurr].local_url;
-            // video.load(); 
-            // video.play();
             that.dyCurr++;
             if(that.dyCurr >= that.vLen2){
                 that.dyCurr = 0; // 播放完了，重新播放 
-             }
+            }
+            document.getElementById("qrcode").innerHTML='';
+            that.qrcode();
+            let video = document.getElementById(id);
+            that.$db.get("SELECT * FROM DOWNLOADS where url = ? and status = 1",that.dyVideoList[that.dyCurr].local_url,function(err,res){
+                console.log('抖音视频play()',that.dyVideoList[that.dyCurr].local_url)
+                console.log(res)
+                if(res){
+                    let filepath = res.filepath
+                    if(fs.existsSync(filepath)){
+                        that.dyVideoSrc = 'file://' + filepath
+                    }else{
+                        that.dyVideoSrc = that.dyVideoList[that.dyCurr].local_url;
+                    }
+                }else{
+                    that.dyVideoSrc = that.dyVideoList[that.dyCurr].local_url;
+                }
+            })
          },
         qrcode() {
             let that = this;
@@ -923,15 +963,17 @@ export default {
             let video = document.getElementById("video_id2");
             document.getElementById("qrcode").innerHTML='';
             that.qrcode();
-            that.dyVideoSrc = that.dyVideoList[0].local_url;
-            // video.load();
-            // video.play();
-            // video.addEventListener("play",function(){
-            //     $("#poster_img2").hide();
-            // });
-            video.addEventListener('ended', function(){
-                that.play2('video_id2');
-            });
+            that.$db.get("SELECT * FROM DOWNLOADS where url = ? and status = 1",that.videoList[0].video_url,function(err,res){
+                console.log('抖音视频dyVideoAjax()',that.videoList[0].video_url)
+                console.log(res)
+                if(res){
+                    let filepath = res.filepath
+                    if(fs.existsSync(filepath)){
+                        that.dyVideoSrc = 'file://' + filepath
+                    }
+                }
+                that.dyVideoSrc = that.dyVideoList[0].local_url;
+            })
         },
         bkScroll(type){
             let that = this;

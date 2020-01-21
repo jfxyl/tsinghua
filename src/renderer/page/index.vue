@@ -639,20 +639,26 @@ export default {
             return parseFloat(val).toFixed(2)
         },
         haveChange(){
-            let that = this;
-            that.configAjax()
-            that.wordCloudAjax();
-            that.videoAjax();
-            that.reportAjax();
+            if(navigator.onLine){
+                let that = this;
+                that.configAjax()
+                that.wordCloudAjax();
+                that.videoAjax();
+                that.reportAjax();
+            }
         },
         haveChange1(){
-            let that = this;
-            that.allAjax();
-            that.overseaAjax();
+            if(navigator.onLine){
+                let that = this;
+                that.allAjax();
+                that.overseaAjax();
+            }
         },
         haveChange2(){
-            let that = this;
-            that.rankAjax();
+            if(navigator.onLine){
+                let that = this;
+                that.rankAjax();
+            }
         },
         configAjax(){
             let that = this;
@@ -762,18 +768,30 @@ export default {
                 let that = this;
                 let reportList = JSON.parse(localStorage.getItem('reportList'))
                 let buildList = JSON.parse(localStorage.getItem('buildList'))
-                reportList.forEach(element=>{
-                    var fileId = crypto.createHash('md5').update(element.img_url).digest("hex");
-                    var filepath = storage.getItem(fileId);
-                    try{
-                        fs.accessSync(filepath,fs.constants.F_OK)
-                        element.img_url = filepath
-                    }catch(err){
-
-                    }
-                })
-
-                if(reportList) that.reportList = reportList
+                let imgUrls = [];
+                for(var i in reportList){
+                    imgUrls.push(reportList[i].img_url);
+                }
+                if(imgUrls.length){
+                    let imgUrlStr = JSON.stringify(imgUrls).slice(1,-1)
+                    that.$db.all("SELECT * FROM DOWNLOADS where url in ("+imgUrlStr+") and status = 1",function(err,res){
+                        if(res){
+                            let mapping = {};
+                            for(i in res){
+                                mapping[res[i].url] = res[i].filepath
+                            }
+                            reportList.forEach(element => {
+                                let filepath = mapping[element.img_url]
+                                if(filepath && fs.existsSync(filepath)){
+                                    element.img_url = filepath
+                                }
+                            })
+                            if(reportList) that.reportList = reportList
+                        }
+                    })
+                }else{
+                    if(reportList) that.reportList = reportList
+                }
                 if(buildList) that.buildList = buildList
                 if(!that.bkTimer) that.bkTimer = setTimeout(that.bkScroll,38000,1)
             });
@@ -848,15 +866,9 @@ export default {
                 that.currVideo = 0; // 播放完了，重新播放 
             }
             let video = document.getElementById(id);
-            console.log(that.videoList,that.currVideo)
-            console.log(that.videoList[that.currVideo].video_url)
             that.$db.get("SELECT * FROM DOWNLOADS where url = ? and status = 1",that.videoList[that.currVideo].video_url,function(err,res){
-                console.log('中间视频play()',that.videoList[that.currVideo].video_url)
-                console.log(res)
                 if(res){
                     let filepath = res.filepath
-                    console.log(filepath)
-                    console.log(fs.existsSync(filepath))
                     if(fs.existsSync(filepath)){
                         that.videoSrc = 'file://' + filepath
                     }else{
@@ -887,8 +899,6 @@ export default {
                     let video = document.getElementById("video_id");
                     if(!that.videoSrc){
                         that.$db.get("SELECT * FROM DOWNLOADS where url = ? and status = 1",that.videoList[0].video_url,function(err,res){
-                            console.log('中间视频videoAjax()',that.videoList[0].video_url)
-                            console.log(res)
                             if(res){
                                 let filepath = res.filepath
                                 if(fs.existsSync(filepath)){
@@ -934,8 +944,6 @@ export default {
             that.qrcode();
             let video = document.getElementById(id);
             that.$db.get("SELECT * FROM DOWNLOADS where url = ? and status = 1",that.dyVideoList[that.dyCurr].local_url,function(err,res){
-                console.log('抖音视频play()',that.dyVideoList[that.dyCurr].local_url)
-                console.log(res)
                 if(res){
                     let filepath = res.filepath
                     if(fs.existsSync(filepath)){
@@ -964,8 +972,6 @@ export default {
             document.getElementById("qrcode").innerHTML='';
             that.qrcode();
             that.$db.get("SELECT * FROM DOWNLOADS where url = ? and status = 1",that.videoList[0].video_url,function(err,res){
-                console.log('抖音视频dyVideoAjax()',that.videoList[0].video_url)
-                console.log(res)
                 if(res){
                     let filepath = res.filepath
                     if(fs.existsSync(filepath)){
@@ -1140,34 +1146,97 @@ export default {
             let that = this;
             that.artTitle = title;
             if(!navigator.onLine){
-                content = that.remote2local(content)
+                let reg1 = /(<img.*?)(data-src)(=.*?\/?>)/mg
+                content = content.replace(reg1,function(match,$1,$2,$3){
+                    return $1 + 'src' + $3;
+                })
+                let reg3 = /<img.*? src=["|'](.*?)["|'].*?\/?>/mg
+                let reg4 = /<img.*? src=["|'](.*?)["|'].*?\/?>/m
+                let info = null
+                let imgs = content.match(reg3)
+                let imgUrls = [];
+                for(var i in imgs){
+                    info = reg4.exec(imgs[i])
+                    if(info){
+                        imgUrls.push(info[1]);
+                    }
+                }
+                if(imgUrls.length){
+                    let imgUrlStr = JSON.stringify(imgUrls).slice(1,-1)
+                    that.$db.all("SELECT * FROM DOWNLOADS where url in ("+imgUrlStr+") and status = 1",function(err,res){
+                        if(res){
+                            for(i in res){
+                                content = content.replace(res[i].url,res[i].filepath)
+                            }
+                        }
+                        that.artContent = content;
+                        that.artAuth= auth;
+                        that.artTime = time;
+                        that.$refs.aticleDialog.showMaskFun();
+                    })
+                }else{
+                    that.artContent = content;
+                    that.artAuth= auth;
+                    that.artTime = time;
+                    that.$refs.aticleDialog.showMaskFun();
+                }
             }else{
                 // 在线的话也需要处理微信图片路径存在data-src及防盗链的问题
                 // 微信公众号文章默认使用本地图片
                 if(type == 'wx'){
-                    content = that.remote2local(content)
+                    let reg1 = /(<img.*?)(data-src)(=.*?\/?>)/mg
+                    content = content.replace(reg1,function(match,$1,$2,$3){
+                        return $1 + 'src' + $3;
+                    })
+                    let reg3 = /<img.*? src=["|'](.*?)["|'].*?\/?>/mg
+                    let reg4 = /<img.*? src=["|'](.*?)["|'].*?\/?>/m
+                    let info = null
+                    let imgs = content.match(reg3)
+                    let imgUrls = [];
+                    for(var i in imgs){
+                        info = reg4.exec(imgs[i])
+                        if(info){
+                            imgUrls.push(info[1]);
+                        }
+                    }
+                    if(imgUrls.length){
+                        let imgUrlStr = JSON.stringify(imgUrls).slice(1,-1)
+                        that.$db.all("SELECT * FROM DOWNLOADS where url in ("+imgUrlStr+") and status = 1",function(err,res){
+                            if(res){
+                                for(i in res){
+                                    content = content.replace(res[i].url,res[i].filepath)
+                                }
+                            }
+                            that.artContent = content;
+                            that.artAuth= auth;
+                            that.artTime = time;
+                            that.$refs.aticleDialog.showMaskFun();
+                        })
+                    }else{
+                        that.artContent = content;
+                        that.artAuth= auth;
+                        that.artTime = time;
+                        that.$refs.aticleDialog.showMaskFun();
+                    }
+                }else{
+                    that.artContent = content;
+                    that.artAuth= auth;
+                    that.artTime = time;
+                    that.$refs.aticleDialog.showMaskFun();
                 }
             }
-            that.artContent = content;
-            that.artAuth= auth;
-            that.artTime = time;
-            that.$refs.aticleDialog.showMaskFun();  
         },
         showReport(img){
             let that = this;
             that.artImg = img;
-            that.$refs.reportDialog.showMaskFun();  
+            that.$refs.reportDialog.showMaskFun(); 
         },
         findLocalImg(src){
-            // var fileId = crypto.createHash('md5').update(src).digest("hex");
-            // var filepath = storage.getItem(fileId);
-            var filepath = this.findFilePath(src);
-            try{
-                fs.accessSync(filepath,fs.constants.F_OK)
-                event.target.src =  'file://'+filepath
-            }catch(err){
-
-            }
+            this.getFilePath(src,function(filepath){
+                if(fs.existsSync(filepath)){
+                    event.target.src =  'file://'+filepath
+                }
+            });
         },
         handleClick(event,num,type = null){
             let that = this;
@@ -1185,34 +1254,28 @@ export default {
         },  
         handleData(data,type){
             let reg = /<img.*?src=["|'](.*?)["|'].*?\/?>/mg
+            let reg1 = /<img.*?src=["|'](.*?)["|'].*?\/?>/m
+            let info = null
             data.forEach(element => {
                 let imgs = element[type].match(reg)
                 for(var i in imgs){
-                    let info = reg.exec(imgs[i])
+                    info = reg1.exec(imgs[i])
                     if(info){
                         ipcRenderer.send('download', info[1])
                     }
                 }
             });
         },
-        remote2local(content){
-            let reg1 = /(<img.*?)(data-src)(=.*?\/?>)/mg
-            content = content.replace(reg1,function(match,$1,$2,$3){
-                return $1 + 'src' + $3;
-            })
-            let reg2 = /(<img.*? src=["|'])(.*?)(["|'].*?\/?>)/mg
-            content = content.replace(reg2,function(match,$1,$2,$3){
-                var fileId = crypto.createHash('md5').update($2).digest("hex");
-                var filepath = storage.getItem(fileId);
-                try{
-                    fs.accessSync(filepath,fs.constants.F_OK)
-                    return $1 + 'file://'+filepath + $3
-                }catch(err){
-                    return "";
+        getFilePath(url,callback){
+            let that = this
+            that.$db.get("SELECT * FROM DOWNLOADS where url = ? and status = 1",url,function(err,res){
+                if (err) {
+                    console.log(err)
+                } else {
+                    callback(res.filepath)
                 }
             })
-            return content
-        },
+        }
 	}
 }
 </script>

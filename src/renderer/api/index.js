@@ -57,7 +57,6 @@ function apiAxios (method, url, params, success, failure, error) {
   })
   .catch(function (err) {
     if(err){
-      console.log(err)
       error(err)
     }
   })

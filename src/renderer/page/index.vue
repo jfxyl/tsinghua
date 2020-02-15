@@ -337,12 +337,11 @@
         </div>
         <Dialog ref="aticleDialog" width="1280" title="">
             <div slot="mdBox">
-                
                 <div class="artBlock">
-                    <vue-scroll class="mt27" :ops="ops" :style="'width:100%;height:'+opsHeight+'px'" ref="cont">
+                    <vue-scroll class="pt27 clearfix" :ops="ops" :style="'width:100%;height:'+opsHeight+'px'" ref="cont">
                         <h4 class="atiTit ac fs28 mb28" v-if="artTitle!=''">{{artTitle}}</h4>
-                        <p class="atiTit mt27" v-if="artTime!='' && artAuth != ''"><span>{{artAuth}}</span><span class="ml20">{{artTime}}</span></p>
-                        <div class="atiCont" v-html="artContent">{{artContent}}</div>
+                        <p class="atiTit" :class="artTitle != '' ? 'mt27' : ''" v-if="artTime!='' && artAuth != ''"><span>{{artAuth}}</span><span class="ml20">{{artTime}}</span></p>
+                        <div class="atiCont" v-html="artContent"></div>
                     </vue-scroll>
                 </div>
             </div>
@@ -1225,7 +1224,22 @@ export default {
                     that.$refs.aticleDialog.showMaskFun();
                 }
             }
+			console.log(that.artTitle);
+			console.log(that.content);
+			if(that.title === that.content){//如果文章标题和内容一样就不显示标题
+			
+				that.artTitle = '';
+			}
         },
+		// 去除汉字
+		RemoveChinese(strValue) {  
+		    if(strValue!= null && strValue != ""){  
+		       var reg = /[\u4e00-\u9fa5]/g;   
+		       return strValue.replace(reg, "");   
+		    }else{
+				return '';
+			}   
+		},
         showReport(img){
             let that = this;
             that.artImg = img;

@@ -26,6 +26,7 @@ a:focus{text-decoration:none;}
 .mt12{margin-top:12px}
 .mt10{margin-top:10px}
 .mt27{margin-top:27px}
+.pt27{padding-top:27px !important}
 .mt40{margin-top:40px!important}
 .mt50{margin-top:50px!important}
 .mt58{margin-top:58px!important}
@@ -95,8 +96,8 @@ h2{font-size:42px;}
 
 .mid-warp{margin: 34px 60px 0px;}
 .title1{height:41px;line-height: 28px;padding:0 8px}
-.img{width: 28px;height: 28px;border-radius:50%;display:inline-block;overflow: hidden;margin: 0 8px -5px 0;}
-.img img{width:100%;height:100%;display: block;}
+.fensi .img{width: 28px;height: 28px;border-radius:50%;display:inline-block;overflow: hidden;margin: 0 8px -5px 0;}
+.fensi .img img{width:100%;height:100%;display: block;}
 .fensi{float:left;width: 33.333%;font-size: 15px;}
 .img-nub{width:40px;height:40px;line-height:40px;text-align:center;font-size:20px;font-weight:700;color: #49b2fc;margin: 0 15px 0 0;}
 .icon-turn1,.icon-turn2,.icon-turn3,.icon-turn4{background-position:-43px -25px;width: 20px;height: 20px;margin: 0;position:absolute;}

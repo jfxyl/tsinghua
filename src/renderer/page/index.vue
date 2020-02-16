@@ -57,7 +57,7 @@
                                     <i class="icons icon-wb"></i>发文：{{wbAcount.publish_count}}
                                 </div>
                             </div>
-                            <div class="echart-warp clearfix news-yel" @click="handleClick($event,2)">
+                            <div class="echart-warp clearfix news-yel" @click="handleClick($event,3,'weibo')">
                                 <vue-seamless-scroll :data="wbList" :class-option="optionSetting1" class="news-warp h148 ">
                                     <ul class="news newscro1">
                                         <li class="news-li" v-for="(item,index) in wbList" :key="index" ref="rollul" :class="{anim:animate.anim1==true}">
@@ -187,7 +187,7 @@
                     <div class="plane plane-green">
                         <div class="plane-title fs18 cr0f">热点新闻<i class="icons icon-arrow1 fr"></i></div>
                         <div class="plane-body">
-                            <div class="echart-warp clearfix " @click="handleClick($event,2)">
+                            <div class="echart-warp clearfix " @click="handleClick($event,2,'hotNews')">
                                 <vue-seamless-scroll :data="hotList" :class-option="optionSetting3" class="news-warp h206">
                                     <ul class="news">
                                         <li class="news-li hotNew clearfix" v-for="(item,index) in hotList" :key="index" >
@@ -216,7 +216,7 @@
                                 <!-- 轮播（Carousel）项目 -->
                                 <div class="carousel-inner h148">
                                     <div class="item slide-item2" :class="yqCarouse0">
-                                        <div class="echart-warp newsNet clearfix" @click="handleClick($event,1)">
+                                        <div class="echart-warp newsNet clearfix" @click="handleClick($event,1,'overseaCommuni')">
                                             <vue-seamless-scroll :data="communiList" :class-option="optionSetting2" class="news-warp h148">
                                                 <ul class="news pt0">
                                                     <li class="news-li" v-for="(item,index) in communiList" :key="index">
@@ -233,7 +233,7 @@
                                         </div>
                                     </div>
                                     <div class="item slide-item2" :class="yqCarouse1">
-                                        <div class="echart-warp newsNet clearfix" @click="handleClick($event,2)">
+                                        <div class="echart-warp newsNet clearfix" @click="handleClick($event,2,'overseaMedia')">
                                             <vue-seamless-scroll :data="mediaList" :class-option="optionSetting2" class="news-warp h148" v-if="mediaList!=''&& isShowTran">
                                                 <ul class="news pt0">
                                                     <li class="news-li" v-for="(item,index) in mediaList" :key="index">
@@ -338,6 +338,20 @@
         <Dialog ref="aticleDialog" width="1280" title="">
             <div slot="mdBox">
                 <div class="artBlock">
+                    <vue-scroll class="pt27 clearfix" :ops="ops" :style="'width:100%;height:'+opsHeight+'px'" ref="cont">
+                        <h4 class="atiTit ac fs28 mb28" v-if="artTitle!=''">{{artTitle}}</h4>
+                        <p class="atiTit" :class="artTitle != '' ? 'mt27' : ''" v-if="artTime!='' && artAuth != ''"><span>{{artAuth}}</span><span class="ml20">{{artTime}}</span></p>
+                        <div class="atiCont" v-html="artContent"></div>
+                        <div class="atiVideo" v-if="artVideo">
+                            <iframe :src="artVideo" scrolling="no"></iframe>
+                        </div>
+                    </vue-scroll>
+                </div>
+            </div>
+        </Dialog>
+        <Dialog ref="centerImgDialog" width="1280" title="">
+            <div slot="mdBox">
+                <div class="artBlock centerImg">
                     <vue-scroll class="pt27 clearfix" :ops="ops" :style="'width:100%;height:'+opsHeight+'px'" ref="cont">
                         <h4 class="atiTit ac fs28 mb28" v-if="artTitle!=''">{{artTitle}}</h4>
                         <p class="atiTit" :class="artTitle != '' ? 'mt27' : ''" v-if="artTime!='' && artAuth != ''"><span>{{artAuth}}</span><span class="ml20">{{artTime}}</span></p>
@@ -453,6 +467,7 @@ export default {
             artTime:'',//文章时间
             artContent:'',//文章内容
             artImg:'',//文章内容
+            artVideo:'',//文章视频
             ops: {
                 vuescroll: {},
                 scrollPanel: {
@@ -807,6 +822,8 @@ export default {
 
                     localStorage.setItem('communiList',JSON.stringify(that.communiList))
                     localStorage.setItem('mediaList',JSON.stringify(that.mediaList))
+                    that.handleData(that.communiList,'news_content')
+                    that.handleData(that.mediaList,'news_content')
                 })
             },null,e => {
                 let that = this;
@@ -1141,9 +1158,11 @@ export default {
                 that.timer = setTimeout(that.scroll,30000,tempType)
             },1000);
         },
-        showDetail(title,content,time,auth,type = null){
+        showDetail(title,tmpContent,time,auth,type = null,videoSrc = null){
             let that = this;
             that.artTitle = title;
+            var reg = /<div.*? style=["|'](.*?)["|'].*?\/?>/g
+            var content = tmpContent.replace(reg,'<div>')
             if(!navigator.onLine){
                 let reg1 = /(<img.*?)(data-src)(=.*?\/?>)/mg
                 content = content.replace(reg1,function(match,$1,$2,$3){
@@ -1171,18 +1190,28 @@ export default {
                         that.artContent = content;
                         that.artAuth= auth;
                         that.artTime = time;
-                        that.$refs.aticleDialog.showMaskFun();
+                        that.artVideo = videoSrc;
+                        if(type == 'overseaMedia' || type == 'hotNews'){
+                            that.$refs.centerImgDialog.showMaskFun();
+                        }else{
+                            that.$refs.aticleDialog.showMaskFun();
+                        }
                     })
                 }else{
                     that.artContent = content;
                     that.artAuth= auth;
                     that.artTime = time;
-                    that.$refs.aticleDialog.showMaskFun();
+                    that.artVideo = videoSrc;
+                    if(type == 'overseaMedia' || type == 'hotNews'){
+                        that.$refs.centerImgDialog.showMaskFun();
+                    }else{
+                        that.$refs.aticleDialog.showMaskFun();
+                    }
                 }
             }else{
                 // 在线的话也需要处理微信图片路径存在data-src及防盗链的问题
                 // 微信公众号文章默认使用本地图片
-                if(type == 'wx'){
+                if(type == 'wx' || type == 'overseaCommuni' || type == 'overseaMedia'){
                     let reg1 = /(<img.*?)(data-src)(=.*?\/?>)/mg
                     content = content.replace(reg1,function(match,$1,$2,$3){
                         return $1 + 'src' + $3;
@@ -1209,27 +1238,43 @@ export default {
                             that.artContent = content;
                             that.artAuth= auth;
                             that.artTime = time;
-                            that.$refs.aticleDialog.showMaskFun();
+                            that.artVideo = videoSrc;
+                            if(type == 'overseaMedia' || type == 'hotNews'){
+                                that.$refs.centerImgDialog.showMaskFun();
+                            }else{
+                                that.$refs.aticleDialog.showMaskFun();
+                            }
                         })
                     }else{
                         that.artContent = content;
                         that.artAuth= auth;
                         that.artTime = time;
-                        that.$refs.aticleDialog.showMaskFun();
+                        that.artVideo = videoSrc;
+                        if(type == 'overseaMedia' || type == 'hotNews'){
+                            that.$refs.centerImgDialog.showMaskFun();
+                        }else{
+                            that.$refs.aticleDialog.showMaskFun();
+                        }
                     }
                 }else{
                     that.artContent = content;
                     that.artAuth= auth;
                     that.artTime = time;
-                    that.$refs.aticleDialog.showMaskFun();
+                    that.artVideo = videoSrc;
+                    if(type == 'overseaMedia' || type == 'hotNews'){
+                        that.$refs.centerImgDialog.showMaskFun();
+                    }else{
+                        that.$refs.aticleDialog.showMaskFun();
+                    }
                 }
             }
-			console.log(that.artTitle);
-			console.log(that.content);
-			if(that.title === that.content){//如果文章标题和内容一样就不显示标题
-			
-				that.artTitle = '';
-			}
+            if(type == 'overseaMedia' || type == 'overseaCommuni'){
+                title = title.trim().replace(/\n|\r/g," ").replace(/\s{2,}/g,' ')
+                tmpContent = that.delHtmlTag(tmpContent).trim().replace(/\n|\r/g," ").replace(/\s{2,}/g,' ')
+                if(title === tmpContent){//如果文章标题和内容一样就不显示标题
+                    that.artTitle = '';
+                }
+            }
         },
 		// 去除汉字
 		RemoveChinese(strValue) {  
@@ -1259,6 +1304,15 @@ export default {
             if(content==undefined){return}
             if(num==1){
                 that.showDetail('',content,'','',type)
+            }else if(num==3){
+                let time = event.target.dataset.time;
+                let auth = event.target.dataset.auth;
+                let reg = /http:\/\/t.cn\/[A-Za-z0-9]+/;
+                var weiboVideoSrc = reg.exec(content)
+                if(weiboVideoSrc){
+                    weiboVideoSrc = weiboVideoSrc[0]
+                }
+                that.showDetail('',content,time,auth,type,weiboVideoSrc)
             }else{
                 let title = event.target.dataset.title;
                 let time = event.target.dataset.time;
@@ -1289,6 +1343,9 @@ export default {
                     callback(res.filepath)
                 }
             })
+        },
+        delHtmlTag(str){
+            return str.replace(/<[^>]+>/g,"");  //正则去掉所有的html标记
         }
 	}
 }

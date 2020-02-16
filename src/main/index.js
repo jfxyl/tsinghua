@@ -10,6 +10,7 @@ const AutoLaunch = require('auto-launch');
 import sq3 from 'sqlite3';
 let configDir = app.getPath('userData');
 const dbPath = path.join(configDir, 'tsinghua.db')
+console.log(dbPath)
 if(fs.existsSync(dbPath)){
   fs.openSync(dbPath, 'w');
 }

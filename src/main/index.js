@@ -11,7 +11,7 @@ import sq3 from 'sqlite3';
 let configDir = app.getPath('userData');
 const dbPath = path.join(configDir, 'tsinghua.db')
 console.log(dbPath)
-if(fs.existsSync(dbPath)){
+if(!fs.existsSync(dbPath)){
   fs.openSync(dbPath, 'w');
 }
 const sqlite3 = sq3.verbose();

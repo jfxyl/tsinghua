@@ -38,13 +38,12 @@ mainWindow.webContents.session.on('will-download', (event, item, webContents) =>
     }catch(err){
         // 写入数据库
         db.get("SELECT * FROM DOWNLOADS WHERE url = ?",url,function(err,res){
-            console.log('select',err,res)
             if(!res){
                 db.run("INSERT INTO DOWNLOADS(url,url_md5,filename,filepath,status) VALUES ((?),(?),(?),(?),(?))",[url,fileId,filename,filepath,0],function(err,res){
                     // console.log(err,res,this.lastId)
                 })
             }else{
-                db.run("UPDATE DOWNLOADS SET status = ? WHERE url = ? ",[0,url],function(err,res){
+                db.run("UPDATE DOWNLOADS SET status = ?,filename = ?,filepath = ? WHERE url = ? ",[0,filename,filepath,url],function(err,res){
                     // console.log(err,res,this.lastId)
                 })
             }

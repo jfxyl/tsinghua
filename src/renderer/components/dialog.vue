@@ -1,6 +1,6 @@
 <template>
 <!-- 省市区 -->
-    <div class="modal" v-show="showMask" @mousemove="move">
+    <div class="modal" v-if="showMask" @mousemove="move">
         <div class="modal-bg"></div>
         <div class="modal-content" ref="monthPie" :style="type != 'normal' ? 'width:340px;height:'+height+'px;margin-left:-170px;' : widthStyle">
             <div class="modal-header">
@@ -114,12 +114,12 @@ export default {
         },
         closeMask(){
             let that = this
-            that.$parent.$refs['cont'].scrollTo({
-                y: '0'
-            },0);
-            that.$parent.$refs['cont1'].scrollTo({
-                y: '0'
-            },0);
+            //that.$parent.$refs['cont'].scrollTo({
+            //    y: '0'
+            //},0);
+            //that.$parent.$refs['cont1'].scrollTo({
+            //    y: '0'
+            //},0);
             this.showMask = false;
             clearInterval(this.timer);
             // this.height = '';

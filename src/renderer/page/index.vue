@@ -343,7 +343,8 @@
                         <p class="atiTit" :class="artTitle != '' ? 'mt27' : ''" v-if="artTime!='' && artAuth != ''"><span>{{artAuth}}</span><span class="ml20">{{artTime}}</span></p>
                         <div class="atiCont" v-html="artContent"></div>
                         <div class="atiVideo" v-if="artVideo">
-                            <iframe :src="artVideo" scrolling="no"></iframe>
+                            <iframe :src="artVideo" scrolling="no" sandbox="allow-scripts" seamless></iframe>
+                            <div class="iframeMask"></div>
                         </div>
                     </vue-scroll>
                 </div>

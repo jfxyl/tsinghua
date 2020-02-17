@@ -190,8 +190,9 @@ video{width:100%;height:100%;}
 .atiCont h1{text-align: center!important;margin-bottom: 20px;}
 .atiCont hr{margin-bottom: 20px;}
 .atiCont p{margin-bottom: 10px;}
-.atiVideo{margin-top:20px;width:100%;}
-.atiVideo iframe{width:100%;height:680px;}
+.atiVideo{margin-top:20px;width:100%;position:relative;}
+.atiVideo iframe{display:block;width:76%;height:680px;margin:0 auto;border:none;}
+.atiVideo .iframeMask{position:absolute;top:0;left:12%;width:76%;height:680px;}
 .artBlock{height:800px;overflow: hidden;}
 .centerImg img{clear: both;display: block;margin: auto;}
 

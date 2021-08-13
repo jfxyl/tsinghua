@@ -34,12 +34,16 @@ function apiAxios (method, url, params, success, failure, error) {
   if(method == 'POST' && !(params instanceof FormData)){
     params = qs.stringify(params);//数据参数格式转换
   }
+  // axios.defaults.headers['Content-Type'] = 'application/x-www-form-urlencoded;charset=UTF-8';
   axios({
     method: method,
     url: url,
     data: method === 'POST' || method === 'PUT' ? params : null,
     params: method === 'GET' || method === 'DELETE' ? params : null,
     baseURL: root,
+    headers: {
+     'Content-Type': 'application/x-www-form-urlencoded;charset=UTF-8'
+    },
     withCredentials: false
   })
   .then(function (res) {

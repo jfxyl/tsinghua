@@ -1,0 +1,6 @@
+不清楚是git bash 的问题还是电脑的问题
+重启更新了之后在cmd下执行npm run build  速度很快
+
+由于npm安装新的包后会导致编译后的sqlite3丢失
+
+需要执行下   npm run postinstall

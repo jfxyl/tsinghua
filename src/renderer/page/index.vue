@@ -1,7 +1,7 @@
 <template>
     <div class="mWrap">
         <div class="header">
-            <h1 class="title ">清华大学融媒大屏</h1>
+            <h1 class="title">清华大学融媒大屏</h1>
             <div class="spot-block">
                 <p class="spot spl1"><img src="static/images/spot1.png"></p>
                 <p class="spot spl2"><img src="static/images/spot1.png"></p>
@@ -29,7 +29,7 @@
                                         <li class="news-li" v-for="(item,index) in wxList" :key="index" >
                                             <div class="in clearfix">
                                                 <p class="title fs16 crff ovhidden" v-if="parseInt(item.read_num)<100000" :data-title="item.news_title" :data-cont="item.news_content" :data-time="item.news_posttime" :data-auth="item.news_author" >{{item.news_title}}</p>
-                                                <p class="title fs16 crff ovhidden" v-if="parseInt(item.read_num)>=100000" :data-title="item.news_title" :data-cont="item.news_content" :data-time="item.news_posttime" :data-auth="item.news_author"><i class="icons icon-hot"></i><strong>{{item.news_title}}</strong></p>
+                                                <p class="title fs16 crff ovhidden strong" v-if="parseInt(item.read_num)>=100000" :data-title="item.news_title" :data-cont="item.news_content" :data-time="item.news_posttime" :data-auth="item.news_author"><i class="icons icon-hot"></i>{{item.news_title}}</p>
                                                 <p class="crb8">
                                                     <span>{{item.news_posttime}}</span>
                                                     <span class="ml20">阅读数：{{item.read_num}}</span>
@@ -80,16 +80,15 @@
                     <div class="plane plane-blue mt50">
                         <div class="plane-title fs18 cr0b mb5">清华新闻网<i class="icons icon-arrow3 fr"></i></div>
                         <div class="plane-body">
-                            <div class="echart-warp newsNet clearfix" @click="handleClick($event,1)">
+                            <div class="echart-warp newsNet clearfix" @click="handleClick($event,2)">
                                 <vue-seamless-scroll :data="newsList" :class-option="optionSetting5" class="news-warp h350">
                                     <ul class="news pt0">
                                         <li class="news-li" v-for="(item,index) in newsList" :key="index">
                                             <div class="in clearfix">
-                                                <p class="title fs16 crff ovhidden" v-if="parseInt(item.read_num)<100000" :data-cont="item.news_content" >{{item.news_title}}</p>
-                                                <p class="title fs16 crff ovhidden" v-if="parseInt(item.read_num)>=100000" :data-cont="item.news_content" ><i class="icons icon-hot"></i><strong>{{item.news_title}}</strong></p>
+                                                <p class="title fs16 crff ovhidden" v-if="parseInt(item.read_num)<100000" :data-title="item.news_title" :data-cont="item.news_content" :data-time="item.news_posttime" :data-auth="item.news_author">{{item.news_title}}</p>
+                                                <p class="title fs16 crff ovhidden strong" v-if="parseInt(item.read_num)>=100000" :data-title="item.news_title" :data-cont="item.news_content" :data-time="item.news_posttime" :data-auth="item.news_author"><i class="icons icon-hot"></i>{{item.news_title}}</p>
                                                 <p class="crb8">
                                                     <span>{{item.news_posttime}}</span>
-                                                    <span class="ml20">阅读数：{{item.read_num}}</span>
                                                 </p>
                                             </div>
                                         </li>
@@ -118,7 +117,7 @@
                             <div class="plane-title fs18 cr0b mb5">词云图<i class="icons icon-arrow3 fr"></i></div>
                             <div class="plane-body pt0">
                                 <div class="echart-warp mt0 h144 mb5">
-                                    <cloudChart id="wordCloud" ref="cloudChart" :dataArray="defaultWords" v-if="defaultWords!= ''"></cloudChart>
+                                    <cloudChart id="wordCloud" ref="cloudChart" :dataArray="defaultWords" v-if="defaultWords.length"></cloudChart>
                                 </div>
                             </div>
                             <div class="plane-title fs18 cr0b afNone"><i class="icons icon-arrow3 fr"></i></div>
@@ -224,7 +223,7 @@
                                                             <p class="title fs16 crff ovhidden" :data-cont="item.news_content" >{{item.news_title}}</p>
                                                             <p class="crb8">
                                                                 <span>{{item.news_posttime}}</span>
-                                                                <span class="ml20">from:Tslnghua universlty news</span>
+                                                                <span class="ml20">from:Tsinghua university news</span>
                                                             </p>
                                                         </div>
                                                     </li>
@@ -383,6 +382,7 @@
  const crypto = require('crypto');
  const storage = require('electron-localstorage');
  const fs = require('fs');
+ const request = require('request');
 
 export default {
     components:{
@@ -505,9 +505,7 @@ export default {
             that.rankAjax();//融媒体联盟榜单
             that.wordCloudAjax();//热门词云
             that.videoAjax();
-            setInterval(() => {
-                that.$refs.cloudChart.init();
-            }, 15000);
+            
             setInterval(that.haveChange,10000)
             setInterval(that.haveChange1,60000)
             setInterval(that.haveChange2,43200000)
@@ -717,11 +715,9 @@ export default {
             that.$api.get('index',null,r =>{
                 that.$parent.returnCode(r,function(){
                     let data = r.data;
-                    let wxLen = parseInt(data.wx_data.length/2)*2;
-                    that.wxList = data.wx_data.slice(0,wxLen);
+                    that.wxList = data.wx_data;
                     that.wbAcount = data.weibo_account;
-                    let wbLen = parseInt(data.weibo_data.length/2)*2;
-                    that.wbList = data.weibo_data.slice(0,wbLen);
+                    that.wbList = data.weibo_data;
                     that.newsList = data.web_data;
                     data.hot_data.forEach((item,index)=>{
                         item.ind = index+1;
@@ -868,11 +864,13 @@ export default {
                         }
                     }
                     localStorage.setItem('defaultWords',JSON.stringify(that.defaultWords))
+                    //that.$refs.cloudChart.init();
                 })
             },null,e => {
                 let that = this;
                 let defaultWords = JSON.parse(localStorage.getItem('defaultWords'))
                 if(defaultWords) that.defaultWords = defaultWords
+                //that.$refs.cloudChart.init();
             })
         },
         //本地视频
@@ -1270,11 +1268,11 @@ export default {
                 }
             }
             if(type == 'overseaMedia' || type == 'overseaCommuni'){
-                title = title.trim().replace(/\n|\r/g," ").replace(/\s{2,}/g,' ')
-                tmpContent = that.delHtmlTag(tmpContent).trim().replace(/\n|\r/g," ").replace(/\s{2,}/g,' ')
-                if(title === tmpContent){//如果文章标题和内容一样就不显示标题
-                    that.artTitle = '';
-                }
+              title = title.trim().replace(/\n|\r|(&nbsp;)| /g," ").replace(/\s{2,}/g,' ')
+              tmpContent = that.delHtmlTag(tmpContent).trim().replace(/\n|\r|(&nbsp;)| /g," ").replace(/\s{2,}/g,' ')
+              if(title === tmpContent){//如果文章标题和内容一样就不显示标题
+                that.artTitle = '';
+              }
             }
         },
 		// 去除汉字
@@ -1312,8 +1310,21 @@ export default {
                 var weiboVideoSrc = reg.exec(content)
                 if(weiboVideoSrc){
                     weiboVideoSrc = weiboVideoSrc[0]
+                    if(window.navigator.onLine){
+                        request(weiboVideoSrc ,function (error, response, body) {
+                            let title = "<title>视频直播</title>"
+                            if(typeof(body) == 'string' && body.indexOf(title) >= 0){
+                                that.showDetail('',content,time,auth,type,weiboVideoSrc)
+                            }else{
+                                that.showDetail('',content,time,auth,type)
+                            }
+                        })
+                    }else{
+                        that.showDetail('',content,time,auth,type)
+                    }
+                }else{
+                    that.showDetail('',content,time,auth,type)
                 }
-                that.showDetail('',content,time,auth,type,weiboVideoSrc)
             }else{
                 let title = event.target.dataset.title;
                 let time = event.target.dataset.time;

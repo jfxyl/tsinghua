@@ -40,6 +40,7 @@ a:focus{text-decoration:none;}
 .crb8{color: #b8c2cc}
 .crff{color: #fff}
 .por{position: relative;}
+.strong{font-size:16px;font-weight: bold;}
 
 body{width:1920px;height:1080px;}
 .big-continer{width:100%;height:100%;margin:0 auto;overflow:hidden;position:relative;background:url(../../../static/images/bg.jpg) repeat top center #000;}
